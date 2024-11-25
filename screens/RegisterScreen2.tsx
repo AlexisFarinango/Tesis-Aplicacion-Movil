@@ -26,17 +26,7 @@ const validacionForm = Yup.object().shape({
     fotografia: Yup.mixed().required('Debes capturar una imagen.'),
 });
 
-// Función para formatear la fecha
-const formatDate = (date) => {
-    if (!date) return ""; // Si no hay fecha, retorna un string vacío
-    const d = new Date(date);
-    // Resetea la hora para evitar problemas con la zona horaria
-    d.setHours(0, 0, 0, 0); 
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, "0"); // Mes comienza en 0
-    const day = String(d.getDate()).padStart(2, "0");
-    return `${year}/${month}/${day}`; // Construye el formato deseado
-};
+
 
 
 
@@ -46,13 +36,6 @@ export default function RegistroEstudiante() {
     const [passwordVisible, setPasswordVisible] = useState(false);
     const navigation = useNavigation();
 
-    const handleChangeDate = (event, selectedDate, setFieldValue) => {
-        setShowDatePicker(false);
-        if (selectedDate) {
-            // Actualiza el valor de la fecha en Formik
-            setFieldValue("fecha_nacimiento", selectedDate.toISOString().split("T")[0]);
-        }
-    };
 
     // Solicitar permiso de cámara y capturar foto
     const requestCameraPermission = async (setFieldValue) => {
@@ -98,7 +81,10 @@ export default function RegistroEstudiante() {
         formData.append('cedula', values.cedula);
         formData.append('email', values.email);
         formData.append('password', values.password);
-        formData.append('fecha_nacimiento', values.fecha_nacimiento);
+        // formData.append('fecha_nacimiento', values.fecha_nacimiento);
+        const fecha = new Date(values.fecha_nacimiento);
+        const formattedDate = `${fecha.getFullYear()}/${String(fecha.getMonth() + 1).padStart(2, '0')}/${String(fecha.getDate()).padStart(2, '0')}`;
+        formData.append('fecha_nacimiento', formattedDate);
         formData.append('direccion', values.direccion);
         formData.append('ciudad', values.ciudad);
         formData.append('cell', values.cell);
@@ -144,8 +130,31 @@ export default function RegistroEstudiante() {
         // await axios.post('https://api.example.com/registro', formData);
     };
 
+    // Función para formatear la fecha
+    const formatDate = (date) => {
+        if (date instanceof Date && !isNaN(date)) {
+            // Verifica que sea una instancia válida de Date
+            const d = new Date(date);
+            // Extrae los componentes de la fecha
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, "0"); // Mes comienza en 0
+            const day = String(d.getDate()).padStart(2, "0");
+            return `${year}/${month}/${day}`; // Construye el formato deseado
+        } else {
+            return ""; // Si no es una instancia válida de Date, retorna un string vacío
+        }
+    };
+    const handleChangeDate = (event, selectedDate, setFieldValue) => {
+        setShowDatePicker(false);
+        if (selectedDate) {
+            // Actualiza el valor de la fecha en Formik
+            // setFieldValue("fecha_nacimiento", selectedDate.toISOString().split("T")[0]);
+            setFieldValue("fecha_nacimiento", selectedDate);
+        }
+    };
     return (
         <ScrollView contentContainerStyle={styles.container}>
+            <Toast />
             <Text style={styles.title}>Nuevo Estudiante</Text>
             <Formik
                 initialValues={{
@@ -154,7 +163,7 @@ export default function RegistroEstudiante() {
                     cedula: '',
                     email: '',
                     password: '',
-                    fecha_nacimiento: '',
+                    fecha_nacimiento: null,
                     direccion: '',
                     ciudad: '',
                     telefono: '',
@@ -260,11 +269,11 @@ export default function RegistroEstudiante() {
                         {/* Aquí va el DateTimePicker si se está mostrando */}
                         {showDatePicker && (
                             <DateTimePicker
-                                value={values.fecha_nacimiento ? new Date(values.fecha_nacimiento).setHours(0, 0, 0, 0) : new Date()}
+                                value={values.fecha_nacimiento ? new Date(values.fecha_nacimiento) : new Date()}
                                 mode="date"
                                 display="default"
                                 maximumDate={new Date()}
-                                onChange={(event, fecha_nacimiento) => handleChangeDate(event, fecha_nacimiento, setFieldValue)}
+                                onChange={(event, selectedDate) => handleChangeDate(event, selectedDate, setFieldValue)}
                             />
                         )}
                         {/* <Button title="Seleccionar Fecha" onPress={() => setShowDatePicker(true)} />
@@ -279,7 +288,7 @@ export default function RegistroEstudiante() {
                         )}
                         {values.date && <Text style={styles.selectedDate}>Fecha seleccionada: {formatDate(values.date)}</Text>}
                         {touched.date && errors.date && <Text style={styles.error}>{errors.date}</Text>} */}
-                        {values.fecha_nacimiento && <Text style={styles.selectedDate}>Fecha seleccionada: {formatDate(values.fecha_nacimiento)}</Text>}
+                        {values.fecha_nacimiento && <Text style={styles.selectedDate}>Fecha seleccionada: {formatDate(new Date(values.fecha_nacimiento))}</Text>}
                         {touched.fecha_nacimiento && errors.fecha_nacimiento && <Text style={styles.error}>{errors.fecha_nacimiento}</Text>}
 
                         <Text>Dirección:</Text>
