@@ -80,7 +80,7 @@ export default function RegistroEstudiante() {
         formData.append('apellido', values.apellido);
         formData.append('cedula', values.cedula);
         formData.append('email', values.email);
-        formData.append('password', values.password);
+        formData.append('password', `EST${values.password}`);
         // formData.append('fecha_nacimiento', values.fecha_nacimiento);
         const fecha = new Date(values.fecha_nacimiento);
         const formattedDate = `${fecha.getFullYear()}/${String(fecha.getMonth() + 1).padStart(2, '0')}/${String(fecha.getDate()).padStart(2, '0')}`;
@@ -253,8 +253,9 @@ export default function RegistroEstudiante() {
 
                                 <Text>Contraseña:</Text>
                                 <View style={styles.passwordContainer}>
+                                <Text style={styles.prefix}>EST</Text>
                                     <TextInput
-                                        style={styles.input}
+                                        style={styles.inputpassword}
                                         placeholder="Ingresa tu contraseña"
                                         secureTextEntry={!passwordVisible} // Cambia la visibilidad
                                         onChangeText={handleChange('password')}
@@ -392,6 +393,21 @@ const styles = StyleSheet.create({
     },
     passwordContainer: {
         marginVertical: 10,
+        flexDirection: 'row', // Organiza los elementos en una fila
+        alignItems: 'center', // Alinea verticalmente en el centro
+        borderWidth: 1, // Opcional: para mostrar un borde en el contenedor
+        borderColor: '#ccc', // Opcional: color del borde
+        borderRadius: 5, // Opcional: esquinas redondeadas
+        padding: 5, // Opcional: espacio interno
+    },
+    prefix: {
+        marginRight: 5, // Espacio entre "EST" y el input
+        fontWeight: 'bold', // Opcional: formato del texto "EST"
+    },
+    inputpassword: {
+        flex: 1, // Hace que el input ocupe el resto del espacio disponible
+        height: 40, // Altura del TextInput
+        backgroundColor: "#fff",
     },
     checkboxContainer: {
         flexDirection: 'row',

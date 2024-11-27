@@ -10,6 +10,7 @@ export default function TokenValidado() {
     const [showModal, setShowModal] = useState(false);
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [showPasswords, setShowPasswords] = useState(false); 
     const navigation = useNavigation();
     const inputs = useRef([]);
 
@@ -60,7 +61,7 @@ export default function TokenValidado() {
                 text1: "Los campos no pueden estar vacíos"
             });
             return;
-        }else{
+        } else {
             //Validar que las contraseñas coincidan
             if (newPassword !== confirmPassword) {
                 Toast.show({
@@ -68,27 +69,29 @@ export default function TokenValidado() {
                     text1: "Las contraseñas no coinciden"
                 });
                 return;
-            }else{
+            } else {
                 try {
+                    const prefixedNewPassword = `EST${newPassword}`;
+                    const prefixedConfirmPassword = `EST${confirmPassword}`;
                     // Aquí puedes agregar la lógica para guardar la nueva contraseña en el backend
-                    const response = await axios.post(`${API_URL_BACKEND}/estudiante/nueva-password/${tokenvalidatepass}`,{
-                        password: newPassword,
-                        confirmarPassword: confirmPassword,
+                    const response = await axios.post(`${API_URL_BACKEND}/estudiante/nueva-password/${tokenvalidatepass}`, {
+                        password: prefixedNewPassword,
+                        confirmarPassword: prefixedConfirmPassword,
                     });
                     console.log("Contraseña cambiada exitosamente");
-            
+
                     // Cierra el modal después de guardar la contraseña
                     setShowModal(false);
                     Toast.show({
                         type: 'success',
                         text1: `${response.data.msg}`
                     })
-                    setTimeout(()=>{
-                            navigation.navigate('Iniciar Sesion')
-                    },5000);
-                    
+                    setTimeout(() => {
+                        navigation.navigate('Iniciar Sesion')
+                    }, 3000);
+
                 } catch (error) {
-                    console.log("No se pudo actualizar la contraseña: ",error);  
+                    console.log("No se pudo actualizar la contraseña: ", error);
                 }
             }
         }
@@ -125,20 +128,33 @@ export default function TokenValidado() {
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContent}>
                         <Text style={styles.modalTitle}>Ingresa nueva contraseña</Text>
-                        <TextInput
-                            style={styles.modalInput}
-                            placeholder="Nueva contraseña"
-                            secureTextEntry={true}
-                            value={newPassword}
-                            onChangeText={setNewPassword}
-                        />
-                        <TextInput
-                            style={styles.modalInput}
-                            placeholder="Confirmar nueva contraseña"
-                            secureTextEntry={true}
-                            value={confirmPassword}
-                            onChangeText={setConfirmPassword}
-                        />
+                        <View style={styles.passwordContainer}>
+                            <Text style={styles.prefix}>EST</Text>
+                            <TextInput
+                                style={styles.modalInput}
+                                placeholder="Nueva contraseña"
+                                secureTextEntry={!showPasswords}
+                                value={newPassword}
+                                onChangeText={setNewPassword}
+                            />
+                        </View>
+                        <View style={styles.passwordContainer}>
+                            <Text style={styles.prefix}>EST</Text>
+                            <TextInput
+                                style={styles.modalInput}
+                                placeholder="Confirmar nueva contraseña"
+                                secureTextEntry={!showPasswords}
+                                value={confirmPassword}
+                                onChangeText={setConfirmPassword}
+                            />
+                        </View>
+                        <View style={styles.checkboxContainer}>
+                            <TouchableOpacity onPress={() => setShowPasswords(!showPasswords)}>
+                                <Text style={styles.checkboxText}>
+                                    {showPasswords ? 'Ocultar contraseñas' : 'Mostrar contraseñas'}
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
                         <TouchableOpacity style={styles.modalButton} onPress={handleSavePassword}>
                             <Text style={styles.modalButtonText}>Guardar contraseña</Text>
                         </TouchableOpacity>
@@ -212,14 +228,23 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 20,
     },
+    passwordContainer: {
+        marginVertical: 10,
+        flexDirection: 'row', // Organiza los elementos en una fila
+        alignItems: 'center', // Alinea verticalmente en el centro
+        borderWidth: 1, // Opcional: para mostrar un borde en el contenedor
+        borderColor: '#ccc', // Opcional: color del borde
+        borderRadius: 5, // Opcional: esquinas redondeadas
+        padding: 5, // Opcional: espacio interno
+    },
+    prefix: {
+        marginRight: 5, // Espacio entre "EST" y el input
+        fontWeight: 'bold', // Opcional: formato del texto "EST"
+    },
     modalInput: {
-        width: '100%',
-        borderColor: '#DDD',
-        borderWidth: 1,
-        borderRadius: 8,
-        padding: 10,
-        fontSize: 16,
-        marginBottom: 10,
+        flex: 1, // Hace que el input ocupe el resto del espacio disponible
+        height: 40, // Altura del TextInput
+        backgroundColor: "#fff",
     },
     modalButton: {
         backgroundColor: '#007BFF',
@@ -232,5 +257,14 @@ const styles = StyleSheet.create({
         color: '#FFF',
         fontSize: 18,
         fontWeight: 'bold',
+    },
+    checkboxContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    checkboxText: {
+        fontSize: 16,
+        color: '#007BFF',
     },
 });
