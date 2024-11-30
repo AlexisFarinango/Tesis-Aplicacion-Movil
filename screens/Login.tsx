@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { user, setUser } = useContext(AuthContext);
+  // const [user, setUser] = useState("")
   const { login } = useContext(AuthContext);
   const navigation = useNavigation();
 
@@ -80,24 +80,8 @@ export default function Login() {
       alert('Por favor completa los campos');
       return;
     }
-
-    try {
-      // Primero intentamos en el endpoint de estudiantes
-      let response = await axios.post(`${API_URL_BACKEND}/estudiante/login`, {
-        email: email,
-        password: password,
-      });
-
-      const { token } = response.data;
-      await AsyncStorage.setItem('userToken', token);
-      login(token);
-      // Redirige al usuario según su rol
-      if (user.rol === 'estudiante') {
-        navigation.navigate("Estudiante");
-      }
-
-    } catch (errorEstudiante) {
-      // Si hay un error, intentamos con el endpoint de docentes
+    const validacion = password.includes("EST")
+    if(!validacion){
       try {
         let response = await axios.post(`${API_URL_BACKEND}/docente/login`, {
           email: email,
@@ -110,6 +94,10 @@ export default function Login() {
         // const decodedToken = jwtDecode(token);
 
         // Redirige al usuario según su rol
+        const user = jwtDecode(token);
+        console.log(user);
+        // setUser(decoded);
+
         if (user.rol === 'docente') {
           navigation.navigate("Docente");
         }
@@ -119,7 +107,69 @@ export default function Login() {
         alert("Usuario o contraseña incorrectos.");
         console.log("Error de autenticación:", errorDocente);
       }
+    }else{
+      try {
+        // Primero intentamos en el endpoint de estudiantes
+        let response = await axios.post(`${API_URL_BACKEND}/estudiante/login`, {
+          email: email,
+          password: password,
+        });
+  
+        const { token } = response.data;
+        await AsyncStorage.setItem('userToken', token);
+        login(token);
+        // Redirige al usuario según su rol
+        const user = jwtDecode(token);
+        console.log(user);
+        
+        // setUser(decoded);
+        if (user.rol === 'estudiante') {
+          navigation.navigate("Estudiante");
+        }
+  
+      } catch (errorEstudiante) {
+        console.log("Error estudiante: ",errorEstudiante);
+      }
     }
+    // try {
+    //   // Primero intentamos en el endpoint de estudiantes
+    //   let response = await axios.post(`${API_URL_BACKEND}/estudiante/login`, {
+    //     email: email,
+    //     password: password,
+    //   });
+
+    //   const { token } = response.data;
+    //   await AsyncStorage.setItem('userToken', token);
+    //   login(token);
+    //   // Redirige al usuario según su rol
+    //   if (user.rol === 'estudiante') {
+    //     navigation.navigate("Estudiante");
+    //   }
+
+    // } catch (errorEstudiante) {
+    //   // Si hay un error, intentamos con el endpoint de docentes
+    //   try {
+    //     let response = await axios.post(`${API_URL_BACKEND}/docente/login`, {
+    //       email: email,
+    //       password: password,
+    //     });
+
+    //     const { token } = response.data;
+    //     await AsyncStorage.setItem('userToken', token);
+    //     login(token);
+    //     // const decodedToken = jwtDecode(token);
+
+    //     // Redirige al usuario según su rol
+    //     if (user.rol === 'docente') {
+    //       navigation.navigate("Docente");
+    //     }
+
+    //   } catch (errorDocente) {
+    //     // Si también falla el login de docente, mostramos un mensaje de error
+    //     alert("Usuario o contraseña incorrectos.");
+    //     console.log("Error de autenticación:", errorDocente);
+    //   }
+    // }
   };
 
 

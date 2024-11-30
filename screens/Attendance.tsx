@@ -94,7 +94,6 @@ export default function Asistencias() {
         },
         card: {
             backgroundColor: '#3373bd',
-            flex: 1,
             margin: 10,
             padding: 30,
             alignItems: 'center',
@@ -105,7 +104,8 @@ export default function Asistencias() {
             shadowOpacity: 0.2,
             shadowRadius: 1.41,
             elevation: 2,
-
+            width: '95%',
+            alignSelf: 'center',
         },
         highlight: {
             backgroundColor: '#FFEBB0',
@@ -117,10 +117,8 @@ export default function Asistencias() {
             textAlign: 'center',
         },
         grid: {
-            paddingHorizontal: 20,
-        },
-        row: {
-            justifyContent: 'space-between',
+            paddingHorizontal: 10,
+            paddingVertical: 10,
         },
         modalContainer: {
             flex: 1,
@@ -275,8 +273,7 @@ export default function Asistencias() {
                 data={cursos}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.materia.toString()}
-                numColumns={2}
-                columnWrapperStyle={styles.row}
+                numColumns={1}
                 contentContainerStyle={styles.grid}
             />
             <Modal

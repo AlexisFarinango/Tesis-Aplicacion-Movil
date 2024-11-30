@@ -42,7 +42,7 @@ export default function Asistencias() {
             color: "#fff", // Letras blancas
             fontWeight: "bold",
             fontSize: 14,
-            width:125,  // Ancho de cada columna (ajustable según necesidad)
+            width: 125,  // Ancho de cada columna (ajustable según necesidad)
             textAlign: "center",
         },
         tableRow: {
@@ -106,7 +106,9 @@ export default function Asistencias() {
             shadowOpacity: 0.2,
             shadowRadius: 1.41,
             elevation: 2,
-    
+            width: '95%', // Ajustado para una columna
+            alignSelf: 'center', // Centra la tarjeta
+
         },
         highlight: {
             backgroundColor: '#FFEBB0',
@@ -118,19 +120,17 @@ export default function Asistencias() {
             textAlign: 'center',
         },
         grid: {
-            paddingHorizontal: 20,
-        },
-        row: {
-            justifyContent: 'space-between',
+            paddingHorizontal: 10,
+        paddingVertical: 10,
         },
     });
-    
 
-    
-    const [cursos,setCursos]=useState([]);
-    const[selectedMateria,setSelectedMateria] = useState(null);
-    const[selectedParalelo,setSelectedParalelo] = useState(null);
-    const[selectedSemestre,setSelectedSemestre] = useState(null);
+
+
+    const [cursos, setCursos] = useState([]);
+    const [selectedMateria, setSelectedMateria] = useState(null);
+    const [selectedParalelo, setSelectedParalelo] = useState(null);
+    const [selectedSemestre, setSelectedSemestre] = useState(null);
 
     // const data = [
     //     { id: 1, title: 'Química', screen:'Detalles Actuaciones'},
@@ -138,7 +138,7 @@ export default function Asistencias() {
     //     { id: 3, title: 'Física', screen:'Detalles Actuaciones'},
     // ];
 
-    const updateCursos=async()=>{
+    const updateCursos = async () => {
         const token = await AsyncStorage.getItem("userToken");
         try {
             const response = await axios.get(`${API_URL_BACKEND}/estudiante/visualizar-cursos`, {
@@ -147,16 +147,16 @@ export default function Asistencias() {
                 }
             });
             setCursos(response.data.informacionCursos)
-            console.log("Información actuaciones cursos:",response.data.informacionCursos);
-            
+            console.log("Información actuaciones cursos:", response.data.informacionCursos);
+
         } catch (error) {
-            console.log("No se pudo cargar los cursos",error);
+            console.log("No se pudo cargar los cursos", error);
             Toast.show({
                 type: "error",
                 text1: "No se encontraron cursos",
-                text2:"Registrate en un Curso"
+                text2: "Registrate en un Curso"
             });
-            
+
         }
     }
 
@@ -166,9 +166,9 @@ export default function Asistencias() {
     }, []);
 
 
-    const navigation=useNavigation();
+    const navigation = useNavigation();
     const renderItem = ({ item }) => (
-        <TouchableOpacity style={[styles.card, item.highlight && styles.highlight]} onPress={()=>navigation.navigate("Detalles Actuaciones", {materia: item.materia, paralelo: item.paralelo, semestre: item.semestre})}>
+        <TouchableOpacity style={[styles.card, item.highlight && styles.highlight]} onPress={() => navigation.navigate("Detalles Actuaciones", { materia: item.materia, paralelo: item.paralelo, semestre: item.semestre })}>
             <Text style={styles.cardText}>{item.materia}</Text>
         </TouchableOpacity>
     );
@@ -177,34 +177,33 @@ export default function Asistencias() {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Actuaciones</Text>
-            <Toast/>
+            <Toast />
             <FlatList
                 data={cursos}
                 renderItem={renderItem}
                 keyExtractor={item => item.materia.toString()}
-                numColumns={2}
-                columnWrapperStyle={styles.row}
+                numColumns={1}
                 contentContainerStyle={styles.grid}
             />
             <View style={styles.bottomNav}>
-                <TouchableOpacity style={styles.navItem} onPress={()=>navigation.navigate('Modulos')}>
-                    <Image source={require('../icons/inicio.png')} style={styles.barNavicon}/>
+                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Modulos')}>
+                    <Image source={require('../icons/inicio.png')} style={styles.barNavicon} />
                     <Text style={styles.navText}>Inicio</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.navItem} onPress={()=>navigation.navigate('Ver Cursos')}>
-                    <Image source={require('../icons/cursos.png')} style={styles.barNavicon}/>
+                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Ver Cursos')}>
+                    <Image source={require('../icons/cursos.png')} style={styles.barNavicon} />
                     <Text style={styles.navText}>Cursos</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.navItem} onPress={()=>navigation.navigate('Ver Asistencias')}>
-                    <Image source={require('../icons/asistencias.png')} style={styles.barNavicon}/>
+                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Ver Asistencias')}>
+                    <Image source={require('../icons/asistencias.png')} style={styles.barNavicon} />
                     <Text style={styles.navText}>Asistencias</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.navItem} onPress={()=>navigation.navigate('Ver Actuaciones')}>
-                    <Image source={require('../icons/actuaciones.png')} style={styles.barNavicon}/>
+                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Ver Actuaciones')}>
+                    <Image source={require('../icons/actuaciones.png')} style={styles.barNavicon} />
                     <Text style={styles.navText}>Actuaciones</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.navItem} onPress={()=>navigation.navigate('Iniciar Sesion')}>
-                    <Image source={require('../icons/cerrarsesion.png')} style={styles.barNavicon}/>
+                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Iniciar Sesion')}>
+                    <Image source={require('../icons/cerrarsesion.png')} style={styles.barNavicon} />
                     <Text style={styles.navText}>Cerrar Sesión</Text>
                 </TouchableOpacity>
             </View>

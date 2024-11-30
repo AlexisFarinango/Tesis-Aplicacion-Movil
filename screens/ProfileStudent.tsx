@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { Text, View, StyleSheet, Image, TouchableOpacity, TextInput, PermissionsAndroid } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
@@ -6,60 +6,42 @@ import { ScrollView } from "react-native-gesture-handler";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { launchCamera } from 'react-native-image-picker';
 import { AuthContext } from "../context/AuthContext";
+import { Formik } from 'formik';
+import * as Yup from 'yup';
 import axios from "axios";
 import { API_URL_BACKEND } from '@env';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { KeyboardAvoidingView, Platform } from 'react-native';
 
+// Función para formatear fecha
 const formatearfecha = (fechaISO) => {
     const fecha = new Date(fechaISO);
     return fecha.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
 };
 
+// Esquema de validación con Yup
+const validationSchema = Yup.object().shape({
+    nombre: Yup.string().required('El nombre es requerido'),
+    apellido: Yup.string().required('El apellido es requerido'),
+    direccion: Yup.string().required('La dirección es requerida'),
+    ciudad: Yup.string().required('La ciudad es requerida'),
+    telefono: Yup.string().required('El teléfono es requerido'),
+});
+
 export default function PerfilEstudiante() {
     const navigation = useNavigation();
     const { userData, datosusuario } = useContext(AuthContext);
+    console.log("datos del perfil",userData);
+    
 
-    const [form, setForm] = useState({
-        id: userData._id,
-        nombre: userData.nombre || "",
-        apellido: userData.apellido || "",
-        cedula: userData.cedula || "",
-        email: userData.email || "",
-        direccion: userData.direccion || "",
-        ciudad: userData.ciudad || "",
-        telefono: userData.telefono || "",
-        fechanacimiento: userData.fecha_nacimiento || "",
-        fotografia: userData.fotografia || "",
-    });
-    useEffect(() => {
-        if (userData) {
-            setForm(prevForm => ({ ...prevForm, fotografia: userData.fotografia }));
-        }
-    }, [userData]);
-
-    const handleInputChange = (field, value) => {
-        setForm(prevForm => ({ ...prevForm, [field]: value }));
-    };
-
-    const handleUpdate = async () => {
+    const handleUpdate = async (values) => {
         try {
             const token = await AsyncStorage.getItem('userToken');
-
-            const formData = new FormData();
-            Object.keys(form).forEach((key) => {
-                if (key === 'fotografia' || key === 'fotografia') {
-                    formData.append('fotografia', {
-                        uri: form.fotografia,
-                        type: 'image/jpeg',
-                        name: 'fotografia.jpg',
-                    });
-                } else {
-                    formData.append(key, form[key]);
-                }
-            });
-
-            const response = await axios.put(`${API_URL_BACKEND}/estudiante/modificar-perfil/${form.id}`, formData, {
+            console.log("valores",values);
+            
+            console.log("Este es el formulario:", JSON.stringify(values, null, 2));
+            
+            await axios.put(`${API_URL_BACKEND}/estudiante/modificar-perfil/${userData._id}`, values, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',
@@ -70,8 +52,8 @@ export default function PerfilEstudiante() {
                 type: "success",
                 text1: "Actualización Realizada con Éxito",
             });
-            // await datosusuario();
-               
+            await datosusuario();
+
             setTimeout(() => {
                 navigation.navigate("Modulos");
             }, 3000);
@@ -84,8 +66,7 @@ export default function PerfilEstudiante() {
         }
     };
 
-
-    const requestCameraPermission = async () => {
+    const requestCameraPermission = async (setFieldValue) => {
         try {
             const granted = await PermissionsAndroid.request(
                 PermissionsAndroid.PERMISSIONS.CAMERA,
@@ -101,7 +82,9 @@ export default function PerfilEstudiante() {
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
                 launchCamera({ mediaType: 'photo' }, (response) => {
                     if (response.assets) {
-                        setForm(prevForm => ({ ...prevForm, fotografia: response.assets[0].uri }));
+                        setFieldValue('fotografia', response.assets[0].uri);
+                        console.log("foto tomada:", response.assets[0].uri);
+                        
                     }
                 });
             } else {
@@ -111,7 +94,6 @@ export default function PerfilEstudiante() {
             console.warn(err);
         }
     };
-
 
     const styles = StyleSheet.create({
         container: {
@@ -147,33 +129,6 @@ export default function PerfilEstudiante() {
             fontWeight: "600",
             color: "#003366",
         },
-        info: {
-            fontSize: 16,
-            color: "#777",
-        },
-        buttonContainer: {
-            marginTop: 30,
-        },
-        button: {
-            backgroundColor: "#003366",
-            padding: 15,
-            borderRadius: 10,
-            marginBottom: 15,
-            alignItems: "center",
-        },
-        buttonpicture: {
-            backgroundColor: "#003366",
-            padding: 15,
-            borderRadius: 10,
-            marginBottom: 15,
-            alignItems: "center",
-            width: 150,
-        },
-        buttonText: {
-            color: "#fff",
-            fontSize: 16,
-            fontWeight: "bold",
-        },
         input: {
             height: 50,
             borderColor: "#ccc",
@@ -182,6 +137,22 @@ export default function PerfilEstudiante() {
             paddingHorizontal: 15,
             marginBottom: 15,
             backgroundColor: "#fff",
+        },
+        readonlyInput: {
+            backgroundColor: "#f5f5f5",
+            color: "#aaa",
+        },
+        button: {
+            backgroundColor: "#003366",
+            padding: 15,
+            borderRadius: 10,
+            marginBottom: 15,
+            alignItems: "center",
+        },
+        buttonText: {
+            color: "#fff",
+            fontSize: 16,
+            fontWeight: "bold",
         },
         statictext: {
             height: 25,
@@ -216,64 +187,110 @@ export default function PerfilEstudiante() {
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
             <KeyboardAvoidingView
-            style={{ flex: 1 }}
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-        >
-            <View style={styles.container}>
-                <Text style={styles.title}>Perfil de Usuario</Text>
-                <View style={styles.imageContainer}>
-                    <Image
-                        source={{
-                            uri: form.fotografia || "https://img.freepik.com/vector-premium/icono-perfil-usuario-estilo-plano-ilustracion-vector-avatar-miembro-sobre-fondo-aislado-concepto-negocio-signo-permiso-humano_157943-15752.jpg",
+                style={{ flex: 1 }}
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+            >
+                <View style={styles.container}>
+                    <Toast/>
+                    <Text style={styles.title}>Perfil de Usuario</Text>
+                    <Formik
+                        initialValues={{
+                            nombre: userData.nombre || '',
+                            apellido: userData.apellido || '',
+                            direccion: userData.direccion || '',
+                            ciudad: userData.ciudad || '',
+                            telefono: userData.telefono || '',
+                            fotografia: userData.fotografia || '',
                         }}
-                        style={styles.profileImage}
-                    />
+                        validationSchema={validationSchema}
+                        onSubmit={handleUpdate}
+                    >
+                        {({ handleChange, handleSubmit, values, setFieldValue, errors, touched }) => (
+                            <>
+                                <View style={styles.imageContainer}>
+                                    <Image
+                                        source={{
+                                            uri: values.fotografia || "https://img.freepik.com/vector-premium/icono-perfil-usuario-estilo-plano-ilustracion-vector-avatar-miembro-sobre-fondo-aislado-concepto-negocio-signo-permiso-humano_157943-15752.jpg",
+                                        }}
+                                        style={styles.profileImage}
+                                    />
+                                </View>
+                                <TouchableOpacity style={styles.button} onPress={() => requestCameraPermission(setFieldValue)}>
+                                    <Text style={styles.buttonText}>Actualizar Foto</Text>
+                                </TouchableOpacity>
+                                <ScrollView>
+                                    <View style={styles.profileSection}>
+                                        <Text style={styles.label}>Nombres:</Text>
+                                        <TextInput
+                                            style={styles.input}
+                                            value={values.nombre}
+                                            onChangeText={handleChange('nombre')}
+                                            placeholder="Nombres"
+                                        />
+                                        {errors.nombre && touched.nombre && <Text style={{ color: 'red' }}>{errors.nombre}</Text>}
+                                    </View>
+                                    <View style={styles.profileSection}>
+                                        <Text style={styles.label}>Apellidos:</Text>
+                                        <TextInput
+                                            style={styles.input}
+                                            value={values.apellido}
+                                            onChangeText={handleChange('apellido')}
+                                            placeholder="Apellidos"
+                                        />
+                                        {errors.apellido && touched.apellido && <Text style={{ color: 'red' }}>{errors.apellido}</Text>}
+                                    </View>
+                                    {/* Campos no editables */}
+                                    <View style={styles.profileSection}>
+                                        <Text style={styles.label}>Correo Institucional:</Text>
+                                        <Text style={styles.statictext}>{userData.email}</Text>
+                                    </View>
+                                    <View style={styles.profileSection}>
+                                        <Text style={styles.label}>Cédula:</Text>
+                                        <Text style={styles.statictext}>{userData.cedula}</Text>
+                                    </View>
+                                    <View style={styles.profileSection}>
+                                        <Text style={styles.label}>Fecha de Nacimiento:</Text>
+                                        <Text style={styles.statictext}>{formatearfecha(userData.fecha_nacimiento)}</Text>
+                                    </View>
+                                    {/* Campos editables */}
+                                    <View style={styles.profileSection}>
+                                        <Text style={styles.label}>Dirección:</Text>
+                                        <TextInput
+                                            style={styles.input}
+                                            value={values.direccion}
+                                            onChangeText={handleChange('direccion')}
+                                            placeholder="Dirección"
+                                        />
+                                        {errors.direccion && touched.direccion && <Text style={{ color: 'red' }}>{errors.direccion}</Text>}
+                                    </View>
+                                    <View style={styles.profileSection}>
+                                        <Text style={styles.label}>Ciudad:</Text>
+                                        <TextInput
+                                            style={styles.input}
+                                            value={values.ciudad}
+                                            onChangeText={handleChange('ciudad')}
+                                            placeholder="Ciudad"
+                                        />
+                                        {errors.ciudad && touched.ciudad && <Text style={{ color: 'red' }}>{errors.ciudad}</Text>}
+                                    </View>
+                                    <View style={styles.profileSection}>
+                                        <Text style={styles.label}>Teléfono:</Text>
+                                        <TextInput
+                                            style={styles.input}
+                                            value={values.telefono}
+                                            onChangeText={handleChange('telefono')}
+                                            placeholder="Teléfono"
+                                        />
+                                        {errors.telefono && touched.telefono && <Text style={{ color: 'red' }}>{errors.telefono}</Text>}
+                                    </View>
+                                    <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+                                        <Text style={styles.buttonText}>Actualizar</Text>
+                                    </TouchableOpacity>
+                                </ScrollView>
+                            </>
+                        )}
+                    </Formik>
                 </View>
-                <View style={styles.imageContainer}>
-                    <Text style={styles.label}>Foto</Text>
-                    <TouchableOpacity style={styles.buttonpicture} onPress={requestCameraPermission}>
-                        <Text style={styles.buttonText}>Actualizar Foto</Text>
-                    </TouchableOpacity>
-                </View>
-                <ScrollView>
-                    <View style={styles.profileSection}>
-                        <Text style={styles.label}>Nombres:</Text>
-                        <TextInput style={styles.input} value={form.nombre} onChangeText={(value) => handleInputChange("nombre", value)} placeholder="Nombres" />
-                    </View>
-                    <View style={styles.profileSection}>
-                        <Text style={styles.label}>Apellidos:</Text>
-                        <TextInput style={styles.input} value={form.apellido} onChangeText={(value) => handleInputChange("apellido", value)} placeholder="Apellidos" />
-                    </View>
-                    <View style={styles.profileSection}>
-                        <Text style={styles.label}>Correo Institucional:</Text>
-                        <Text style={styles.statictext}>{form.email}</Text>
-                    </View>
-                    <View style={styles.profileSection}>
-                        <Text style={styles.label}>Cédula:</Text>
-                        <Text style={styles.statictext}>{form.cedula}</Text>
-                    </View>
-                    <View style={styles.profileSection}>
-                        <Text style={styles.label}>Fecha de Nacimiento:</Text>
-                        <Text style={styles.statictext}>{formatearfecha(form.fechanacimiento)}</Text>
-                    </View>
-                    <View style={styles.profileSection}>
-                        <Text style={styles.label}>Dirección:</Text>
-                        <TextInput style={styles.input} value={form.direccion} onChangeText={(value) => handleInputChange("direccion", value)} placeholder="Dirección" />
-                    </View>
-                    <View style={styles.profileSection}>
-                        <Text style={styles.label}>Ciudad:</Text>
-                        <TextInput style={styles.input} value={form.ciudad} onChangeText={(value) => handleInputChange("ciudad", value)} placeholder="Ciudad" />
-                    </View>
-                    <View style={styles.profileSection}>
-                        <Text style={styles.label}>Teléfono:</Text>
-                        <TextInput style={styles.input} value={form.telefono} onChangeText={(value) => handleInputChange("telefono", value)} placeholder="Teléfono" />
-                    </View>
-                </ScrollView>
-                <TouchableOpacity style={styles.button} onPress={handleUpdate}>
-                    <Text style={styles.buttonText}>Actualizar Información</Text>
-                </TouchableOpacity>
-                <Toast />
-            </View>
             </KeyboardAvoidingView>
             <View style={styles.bottomNav}>
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Modulos')}>

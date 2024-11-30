@@ -1,11 +1,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, FlatList, Modal } from "react-native";
 import { API_URL_BACKEND } from '@env';
 import { jwtDecode } from 'jwt-decode';
 import Toast from "react-native-toast-message";
 import axios from "axios";
+import { AuthContext } from "../context/AuthContext";
 
 
 export default function RegistrarAsistencias() {
@@ -133,6 +134,11 @@ export default function RegistrarAsistencias() {
     // ];
     const [cursos, setCursos] = useState([]);
     const navigation=useNavigation();
+    const {logout} = useContext(AuthContext);
+    const handleLogout = async () => {
+        await logout();  // Llamar la función logout del contexto
+        navigation.navigate("Iniciar Sesion");  // Navegar a la pantalla de inicio de sesión
+    };
     const updateCursos = async () => {
         const token = await AsyncStorage.getItem('userToken');
         console.log("token obtenido en context docente",token);
@@ -270,8 +276,16 @@ export default function RegistrarAsistencias() {
                 });
             }
         } catch (error) {
-            console.log("Error al verificar fecha de registro:", error);
-            ToastAndroid.show("Error al verificar actuaciones", ToastAndroid.LONG);
+            const status = error.response.status;
+            if (status === 400) {
+                Toast.show({
+                    type:"error",
+                    text1:"No Existen Estudiantes Registrados en la Materia"
+                })
+                console.log("No Existen Estudiantes Registrados en la Materia:", error);
+            }else{
+                console.log("Error al verificar fecha de registro:", error);
+            }
         }
     };
     useEffect(() => {
@@ -300,8 +314,8 @@ export default function RegistrarAsistencias() {
                     <Image source={require('../icons/asistencias.png')} style={styles.barNavicon}/>
                     <Text style={styles.navText}>Actuaciones</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.navItem} onPress={()=>navigation.navigate('Iniciar Sesion')}>
-                    <Image source={require('../icons/cerrarsesion.png')} style={styles.barNavicon}/>
+                <TouchableOpacity style={styles.navItem} onPress={()=>handleLogout()}>
+                    <Image source={require('../icons/cerrarsesion.png')} style={styles.barNavicon} />
                     <Text style={styles.navText}>Cerrar Sesión</Text>
                 </TouchableOpacity>
             </View>

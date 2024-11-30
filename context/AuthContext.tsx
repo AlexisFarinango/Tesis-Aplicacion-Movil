@@ -35,7 +35,7 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState(""); // Aquí se guarda la decodificación del token (rol e ID)
+  // const [user, setUser] = useState(""); // Aquí se guarda la decodificación del token (rol e ID)
   const [userData, setUserData] = useState<UserData | null>(null); // Aquí los datos completos del usuario
   const [loading, setLoading] = useState(true); // Estado de carga inicial
  
@@ -44,34 +44,43 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   
   const datosusuario= async()=>{
     const token = await AsyncStorage.getItem("userToken")
-    try {
-      console.log("Este es el token", token);
+    const user = jwtDecode(token)
+    if (user.rol == "estudiante") {
+      try {
+        console.log("Este es el token", token);
+        
+        const response = await axios.get(`${API_URL_BACKEND}/estudiante/perfil`, {
+            headers: {
+                'Authorization': `Bearer ${token}` // Inserta el token en los headers como Bearer
+            }
+        });
+        console.log("DATOS CONFIRMADOS: ",user);
+        
+        console.log("Esto es la data del usuario",response.data);
+        setUserData(response.data); // Guardar la información decodificada
+      } catch (error) {
+        console.log("error al obtener datos",error);
+      }
+    } else {
+      console.log("DATOS CONFIRMADOS: ",user);
+      console.log("Del docente no se obtienen datos");
       
-      const response = await axios.get(`${API_URL_BACKEND}/estudiante/perfil`, {
-          headers: {
-              'Authorization': `Bearer ${token}` // Inserta el token en los headers como Bearer
-          }
-      });
-      console.log("Esto es la data del usuario",response.data);
-      setUserData({ ...response.data }); // Guardar la información decodificada
-    } catch (error) {
-      console.log(error);
     }
   }
   useEffect(() => {
     const checkToken = async () => {
-      const storedToken = await AsyncStorage.getItem('userToken');
-      console.log("token obtenido en context",storedToken);
-      const decode = jwtDecode(storedToken);
-      setUser(decode)
+      // const storedToken = await AsyncStorage.getItem('userToken');
+      // // console.log("token obtenido en context",storedToken);
+      // // const decode = jwtDecode(storedToken);
+      // // setUser(decode)
       
+      // if (storedToken) {
+      //   const decoded = jwtDecode(storedToken);
+      //   setUser(decoded);
+        
+      // }
       datosusuario();
       
-      if (storedToken) {
-        const decoded = jwtDecode(storedToken);
-        // setUser(decoded);
-        
-      }
       setLoading(false);
     };
 
@@ -80,8 +89,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async(token:string)=>{
     try {
       await AsyncStorage.setItem('userToken',token);
-      const decoded = jwtDecode(token)
-      setUser(decoded)
+      // const decoded = jwtDecode(token)
+      // setUser(decoded)
       datosusuario();
     } catch (error) {
       console.log("Fallo al iniciar sesión",error);
@@ -96,7 +105,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // if(await AsyncStorage.getItem('userToken')==null){
     //   setUser("")
     // }
-    console.log("usuario",user);
+    // console.log("usuario",user);
     
     console.log("Token elimindado");
     
@@ -105,7 +114,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Asegúrate de eliminar el token del encabezado de axios si es necesario
   };
   return (
-    <AuthContext.Provider value={{ user, userData,login, logout, loading, datosusuario }}>
+    <AuthContext.Provider value={{ userData,login, logout, loading, datosusuario }}>
       {children}
     </AuthContext.Provider>
   );

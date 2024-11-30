@@ -1,15 +1,17 @@
 import { useNavigation } from '@react-navigation/native';
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { API_URL_BACKEND } from '@env'
+import { AuthContext } from '../context/AuthContext';
 
 const data = [
     { id: 1, title: 'Registrar Actuaciones', icon: require('../icons/asistencias.png'), screen:'Ver Actuaciones'},
 ];
 
 export default function ModulosDocentes() {
+    const {logout} = useContext(AuthContext);
     const navigation = useNavigation();
     const renderItem = ({ item }) => (
         <TouchableOpacity style={[styles.card, item.highlight && styles.highlight]} onPress={()=>navigation.navigate(item.screen)}>
@@ -17,6 +19,10 @@ export default function ModulosDocentes() {
             <Text style={styles.cardText}>{item.title}</Text>
         </TouchableOpacity>
     );
+    const handleLogout = async () => {
+        await logout();  // Llamar la función logout del contexto
+        navigation.navigate("Iniciar Sesion");  // Navegar a la pantalla de inicio de sesión
+    };
 
     return (
         <View style={styles.container}>
@@ -38,8 +44,8 @@ export default function ModulosDocentes() {
                     <Image source={require('../icons/asistencias.png')} style={styles.barNavicon}/>
                     <Text style={styles.navText}>Actuaciones</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.navItem} onPress={()=>navigation.navigate('Iniciar Sesion')}>
-                    <Image source={require('../icons/cerrarsesion.png')} style={styles.barNavicon}/>
+                <TouchableOpacity style={styles.navItem} onPress={()=>handleLogout()}>
+                    <Image source={require('../icons/cerrarsesion.png')} style={styles.barNavicon} />
                     <Text style={styles.navText}>Cerrar Sesión</Text>
                 </TouchableOpacity>
             </View>

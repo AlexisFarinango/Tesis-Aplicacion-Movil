@@ -4,14 +4,12 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { enableScreens } from 'react-native-screens';
 import Login from "./screens/Login";
 import HomeScreen from "./screens/HomeScreen";
-import RegistroEstudiante from "./screens/RegisterScreen2";
-// import RegistroEstudiante from "./screens/RegisterScreen";
+import RegistroEstudiante from "./screens/RegisterScreen";
 import RecuperarContra from "./screens/RecoverPassword";
 import StudentNavigation from "./RoutesStudent";
 import TeacherNavigation from "./RoutesTeacher";
 import TokenValidado from "./screens/TokenValidate";
 import { AuthProvider } from './context/AuthContext'; // Ajusta la ruta según tu estructura
-import { Linking } from 'react-native';
 import TokenValidadoRegistro from "./screens/TokenValidateRegister";
 
 
