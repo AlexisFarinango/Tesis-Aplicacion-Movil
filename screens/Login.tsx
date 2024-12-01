@@ -107,11 +107,11 @@ export default function Login() {
   const { login } = useContext(AuthContext);
   const navigation = useNavigation();
   const [passwordVisible, setPasswordVisible] = useState(false);
-
-
-
-
-
+  
+  
+  
+  
+  
   const handleLogin = async () => {
     if (!email || !password) {
       alert('Por favor completa los campos');
@@ -124,21 +124,24 @@ export default function Login() {
           email: email,
           password: password,
         });
-
+        
         const { token } = response.data;
         await AsyncStorage.setItem('userToken', token);
         login(token);
         // const decodedToken = jwtDecode(token);
-
+        
         // Redirige al usuario según su rol
         const user = jwtDecode(token);
         console.log(user);
         // setUser(decoded);
-
+        
+        
         if (user.rol === 'docente') {
           navigation.navigate("Docente");
+          setEmail("");
+          setPassword("");
         }
-
+        
       } catch (errorDocente) {
         // Si también falla el login de docente, mostramos un mensaje de error
         alert("Usuario o contraseña incorrectos.");
@@ -162,6 +165,8 @@ export default function Login() {
         // setUser(decoded);
         if (user.rol === 'estudiante') {
           navigation.navigate("Estudiante");
+          setEmail("");
+          setPassword("");
         }
 
       } catch (errorEstudiante) {

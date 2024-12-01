@@ -55,16 +55,16 @@ export default function DetallesActuaciones() {
 
     const renderItem = ({ item, index }) => (
         <View style={styles.tableRow}>
-            <Text style={styles.tableCell}>{item}</Text>
-            <TouchableOpacity 
+            <Text style={styles.tableCelldos}>{item}</Text>
+            <TouchableOpacity
                 style={[
-                    styles.tableCellButton, 
+                    styles.tableCellButton,
                     detalles[index] && detalles[index].length > 0 ? styles.verButton : styles.sinButton
-                ]} 
+                ]}
                 onPress={() => handleDescriptionPress(index)}
                 disabled={!detalles[index] || detalles[index].length === 0}
             >
-                <Text style={styles.buttonText}>
+                <Text style={styles.buttonTextdos}>
                     {detalles[index] && detalles[index].length > 0 ? 'Ver Descripción' : 'Sin Descripción'}
                 </Text>
             </TouchableOpacity>
@@ -74,40 +74,45 @@ export default function DetallesActuaciones() {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Detalle Actuaciones{"\n"} Semestre {semestre}</Text>
-            <View style={styles.tableContainer}>
-                <View style={styles.table}>
-                    <View style={styles.tableHeader}>
-                        <Text style={[styles.headerText, { width: '50%' }]}>Fecha</Text>
-                        <Text style={[styles.headerText, { width: '50%' }]}>Descripciones</Text>
-                    </View>
-                    <FlatList
-                        data={fechas}
-                        renderItem={({ item, index }) => (
-                            <View style={styles.tableRow}>
-                                <Text style={[styles.tableCell, { width: '50%' }]}>{item}</Text>
-                                <TouchableOpacity 
-                                    style={[
-                                        styles.tableCellButton, 
-                                        detalles[index] && detalles[index].length > 0 ? styles.verButton : styles.sinButton
-                                    ]} 
-                                    onPress={() => handleDescriptionPress(index)}
-                                    disabled={!detalles[index] || detalles[index].length === 0}
-                                >
-                                    <Text style={styles.buttonText}>
-                                        {detalles[index] && detalles[index].length > 0 ? 'Ver Descripción' : 'Sin Descripción'}
-                                    </Text>
-                                </TouchableOpacity>
-                            </View>
-                        )}
-                        keyExtractor={(item, index) => index.toString()}
-                        style={styles.flatList}
-                    />
-                </View>
+            {fechas.length === 0 ? ( // Condición para verificar si no hay datos
+                <Text style={styles.noDataText}>No existen registros de actuaciones en este curso</Text>
+            ) : (
 
-                <View style={styles.totalContainer}>
-                    <Text style={styles.totalText}>Actuaciones Durante el Semestre: {totalactuaciones}</Text>
+                <View style={styles.tableContainer}>
+                    <View style={styles.tabledos}>
+                        <View style={styles.tableHeader}>
+                            <Text style={[styles.headerText, { width: '50%' }]}>Fecha</Text>
+                            <Text style={[styles.headerText, { width: '50%' }]}>Descripciones</Text>
+                        </View>
+                        <FlatList
+                            data={fechas}
+                            renderItem={({ item, index }) => (
+                                <View style={styles.tableRow}>
+                                    <Text style={[styles.tableCell, { width: '50%' }]}>{item}</Text>
+                                    <TouchableOpacity
+                                        style={[
+                                            styles.tableCellButton,
+                                            detalles[index] && detalles[index].length > 0 ? styles.verButton : styles.sinButton
+                                        ]}
+                                        onPress={() => handleDescriptionPress(index)}
+                                        disabled={!detalles[index] || detalles[index].length === 0}
+                                    >
+                                        <Text style={styles.buttonText}>
+                                            {detalles[index] && detalles[index].length > 0 ? 'Ver Descripción' : 'Sin Descripción'}
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            )}
+                            keyExtractor={(item, index) => index.toString()}
+                            style={styles.flatList}
+                        />
+                    </View>
+
+                    <View style={styles.totalContainer}>
+                        <Text style={styles.totalText}>Actuaciones Durante el Semestre: {totalactuaciones}</Text>
+                    </View>
                 </View>
-            </View>
+            )}
 
             <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
                 <Text style={styles.buttonText}>Regresar</Text>
@@ -121,10 +126,10 @@ export default function DetallesActuaciones() {
             >
                 <View style={styles.modalBackground}>
                     <View style={styles.modalContent}>
-                        <Text style={[styles.modalTitle,{ textAlign: 'center' }]}>Descripciones</Text>
+                        <Text style={[styles.modalTitle, { textAlign: 'center' }]}>Descripciones</Text>
                         <View style={styles.table}>
                             <View style={[styles.tableRow, styles.tableHeaderRow]}>
-                                <Text style={[styles.tableHeader, { width: '100%' },{ flex: 1, textAlign: 'center', color: '#333',fontWeight: 'bold', }]}>Detalles</Text>
+                                <Text style={[styles.tableHeaderdos, { width: '100%' }, { flex: 1, textAlign: 'center', color: '#333', fontWeight: 'bold', }]}>Detalles</Text>
                             </View>
                             {selectedDescriptions.length > 0 ? (
                                 Array.isArray(selectedDescriptions) ? (
@@ -210,11 +215,11 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         color: '#333',
     },
-    table: {
+    tabledos: {
         width: '100%',
         marginVertical: 10,
     },
-    tableRow: {
+    tableRowdos: {
         flexDirection: 'row',
         justifyContent: 'flex-start',
         padding: 10,
@@ -225,15 +230,15 @@ const styles = StyleSheet.create({
         backgroundColor: '#4A90E2',
         borderTopLeftRadius: 10,
         borderTopRightRadius: 10,
-        
+
     },
-    tableHeader: {
+    tableHeaderdos: {
         color: '#fff',
         fontWeight: 'bold',
         fontSize: 16,
-        
+
     },
-    tableCell: {
+    tableCelldos: {
         fontSize: 14,
         color: '#333',
         textAlign: 'left',
@@ -246,7 +251,7 @@ const styles = StyleSheet.create({
         width: '100%',
         alignItems: 'center',
     },
-    buttonText: {
+    buttonTextdos: {
         color: '#fff',
         fontSize: 16,
     },

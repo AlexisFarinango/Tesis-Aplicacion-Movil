@@ -24,6 +24,7 @@ export default function DetalleActuaciones() {
 
     const [actuaciones, setActuaciones] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
+    const [modalVisibledos, setModalVisibledos] = useState(false);
     const [descripcion, setDescripcion] = useState('');
     const [currentEstudiante, setCurrentEstudiante] = useState(null);
     const [escuchando, setEscuchando] = useState(false);
@@ -373,6 +374,15 @@ export default function DetalleActuaciones() {
             {actuaciones.length === 0 ? (
                 <Text style={styles.noDataText}>No existen Registros con la fecha Actual, verifica el Registro de Asistencias</Text>
             ) : (<>
+                <View style={styles.headerContainer}>
+                    <Text style={styles.infoText}>Info</Text>
+                    <TouchableOpacity onPress={() => setModalVisibledos(true)}>
+                        <Image
+                            source={require('../icons/info.png')}
+                            style={styles.infoIcon}
+                        />
+                    </TouchableOpacity>
+                </View>
                 <View style={styles.table}>
                     <View style={[styles.tableRow, styles.tableHeaderRow]}>
                         <Text style={styles.tableHeader}>Estudiantes</Text>
@@ -407,8 +417,8 @@ export default function DetalleActuaciones() {
             )}
 
             <Modal visible={modalVisible} animationType='slide' transparent={true} onRequestClose={cerrarModal}>
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
+                <View style={styles.modalContainerdos}>
+                    <View style={styles.modalContentdos}>
                         <Text style={styles.modalTitle}>Añadir Descripción</Text>
                         <Text style={styles.counterText}>
                             Número de Descripciones {currentEstudiante ? currentEstudiante.descripciones.length + 1 : 1}/3
@@ -437,6 +447,36 @@ export default function DetalleActuaciones() {
                     </View>
                 </View>
             </Modal>
+
+            <Modal
+                visible={modalVisibledos}
+                animationType="slide"
+                transparent={true}
+                onRequestClose={() => setModalVisibledos(false)}
+            >
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <Text>Permite aumentar las actuaciones de cada estudiante</Text>
+                        <View style={styles.iconContainer}>
+                            <Image source={require('../icons/aumentar.png')} style={styles.icondos} />
+                        </View>
+                        <Text>Permite disminuir las actuaciones de cada estudiante</Text>
+                        <View style={styles.iconContainer}>
+                            <Image source={require('../icons/disminuir.png')} style={styles.icondos} />
+                        </View>
+                        <Text>Permite registrar 3 descripciones por medio de voz o texto de cada estudiante durante la clase</Text>
+                        <View style={styles.iconContainer}>
+                            <Image source={require('../icons/microfono.png')} style={styles.icondos} />
+                        </View>
+                        <TouchableOpacity
+                            style={styles.closeButton}
+                            onPress={() => setModalVisibledos(false)}
+                        >
+                            <Text style={styles.closeButtonText}>Cerrar</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 }
@@ -457,7 +497,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         textAlign: 'center',
         color: '#666',
-        marginBottom: 20,
     },
     table: {
         flex: 1,
@@ -503,7 +542,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flex: 1,
     },
-    icon: {
+    icondos: {
         width: 30,   // Tamaño de los iconos
         height: 30,
     },
@@ -554,7 +593,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
-    modalContent: {
+    modalContentdos: {
         width: '80%',
         padding: 20,
         backgroundColor: '#fff',
@@ -628,5 +667,51 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginBottom: 10,
         color: '#666',
+    },
+    headerContainer: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+    },
+    infoIcon: {
+        width: 25,
+        height: 25,
+    },
+    infoText: {
+        fontSize: 16, // Ajusta el tamaño de la fuente según sea necesario
+        marginRight: 5, // Espacio entre el texto y el icono
+        color: '#333', // Color del texto
+    },
+    modalContainerdos: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+        width: '80%',
+        padding: 20,
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        alignItems: 'center',
+    },
+    closeButton: {
+        marginTop: 20,
+        backgroundColor: 'red',
+        padding: 10,
+        borderRadius: 5,
+    },
+    closeButtonText: {
+        color: '#fff',
+        fontSize: 16,
+    },
+    iconContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginVertical: 5,
+    },
+    icon: {
+        width: 30,
+        height: 30,
+        marginRight: 10,
     },
 });

@@ -55,50 +55,6 @@ export default function TokenValidadoRegistro() {
             }
         }
     };
-
-    // const handleSavePassword = async () => {
-    //     const tokenvalidatepass = code.join('');
-    //     // Validar que los campos no estén vacíos
-    //     if (!newPassword || !confirmPassword) {
-    //         Toast.show({
-    //             type: "error",
-    //             text1: "Los campos no pueden estar vacíos"
-    //         });
-    //         return;
-    //     }else{
-    //         //Validar que las contraseñas coincidan
-    //         if (newPassword !== confirmPassword) {
-    //             Toast.show({
-    //                 type: "error",
-    //                 text1: "Las contraseñas no coinciden"
-    //             });
-    //             return;
-    //         }else{
-    //             try {
-    //                 // Aquí puedes agregar la lógica para guardar la nueva contraseña en el backend
-    //                 const response = await axios.post(`${API_URL_BACKEND}/estudiante/nueva-password/${tokenvalidatepass}`,{
-    //                     password: newPassword,
-    //                     confirmarPassword: confirmPassword,
-    //                 });
-    //                 console.log("Contraseña cambiada exitosamente");
-            
-    //                 // Cierra el modal después de guardar la contraseña
-    //                 setShowModal(false);
-    //                 Toast.show({
-    //                     type: 'success',
-    //                     text1: `${response.data.msg}`
-    //                 })
-    //                 setTimeout(()=>{
-    //                         navigation.navigate('Iniciar Sesion')
-    //                 },5000);
-                    
-    //             } catch (error) {
-    //                 console.log("No se pudo actualizar la contraseña: ",error);  
-    //             }
-    //         }
-    //     }
-    // };
-
     return (
         <View style={styles.container}>
             <Toast />
@@ -168,43 +124,4 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
     },
-    // modalOverlay: {
-    //     flex: 1,
-    //     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    //     justifyContent: 'center',
-    //     alignItems: 'center',
-    // },
-    // modalContent: {
-    //     width: '80%',
-    //     backgroundColor: '#FFF',
-    //     padding: 20,
-    //     borderRadius: 10,
-    //     alignItems: 'center',
-    // },
-    // modalTitle: {
-    //     fontSize: 20,
-    //     fontWeight: 'bold',
-    //     marginBottom: 20,
-    // },
-    // modalInput: {
-    //     width: '100%',
-    //     borderColor: '#DDD',
-    //     borderWidth: 1,
-    //     borderRadius: 8,
-    //     padding: 10,
-    //     fontSize: 16,
-    //     marginBottom: 10,
-    // },
-    // modalButton: {
-    //     backgroundColor: '#007BFF',
-    //     padding: 15,
-    //     borderRadius: 8,
-    //     alignItems: 'center',
-    //     marginTop: 10,
-    // },
-    // modalButtonText: {
-    //     color: '#FFF',
-    //     fontSize: 18,
-    //     fontWeight: 'bold',
-    // },
 });

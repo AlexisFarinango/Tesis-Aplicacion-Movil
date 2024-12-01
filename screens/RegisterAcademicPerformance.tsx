@@ -129,13 +129,6 @@ export default function RegistrarAsistencias() {
             // marginBottom: 5,
         },
     });
-
-
-    // const data = [
-    //     { id: 1, title: 'Química', screen:'Detalle Registro Actuacion'},
-    //     { id: 2, title: 'Matemáticas',screen:'Detalle Registro Actuacion'},
-    //     { id: 3, title: 'Física', screen:'Detalle Registro Actuacion'},
-    // ];
     const [cursos, setCursos] = useState([]);
     const navigation = useNavigation();
     const { logout } = useContext(AuthContext);
@@ -182,44 +175,6 @@ export default function RegistrarAsistencias() {
             console.log("Error al obtener los cursos:", error);
         }
     };
-    // const renderItem = ({ item }) => (
-    //     <TouchableOpacity style={[styles.card, item.highlight && styles.highlight]} onPress={()=>navigation.navigate("Detalle Registro Actuacion", {materia: item.materia, paralelo: item.paralelo, semestre: item.semestre})}>
-    //         <Text style={styles.cardText}>{item.materia}</Text>
-    //     </TouchableOpacity>
-    // );
-    // const validarFecharegistroActuaciones = async()=> {
-    //     const token = await AsyncStorage.getItem('userToken');
-    //     const obtenerFechaActual = () => {
-    //         const ahora = new Date();
-    //         const anio = ahora.getFullYear();
-    //         const mes = String(ahora.getMonth() + 1).padStart(2, '0'); // Meses van de 0 a 11
-    //         const dia = String(ahora.getDate()).padStart(2, '0');
-    //         return `${dia}/${mes}/${anio}`;
-    //     };
-
-    //     const fechaActual = obtenerFechaActual();
-    //     console.log("Fecha formateada:", fechaActual);
-
-    //     try {
-    //         const response = await axios.post(`${API_URL_BACKEND}/actuacion/visualizar`,{
-    //             materia: "Programación",
-    //             paralelo: "GR1",
-    //             semestre: "2024-B"
-    //         },{
-    //             headers: {
-    //                 'Authorization': `Bearer ${token}`
-    //             }
-    //         });
-
-
-    //         console.log("respuesta validar Fecha:",response.data);
-    //         console.log("respuesta validar Fecha:",response.data.map((item)=>(item.fecha_actuaciones)));
-
-    //     } catch (error) {
-    //         console.log("Error al obtener fecha",error);
-
-    //     }
-    // }
     const renderItem = ({ item }) => (
         <TouchableOpacity
             style={[styles.card, item.highlight && styles.highlight]}
