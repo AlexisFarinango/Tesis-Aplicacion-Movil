@@ -105,7 +105,6 @@ export default function PerfilEstudiante() {
         title: {
             fontSize: 28,
             fontWeight: "bold",
-            marginBottom: 20,
             textAlign: "center",
             color: "#003366",
         },
@@ -114,8 +113,8 @@ export default function PerfilEstudiante() {
             marginBottom: 20,
         },
         profileImage: {
-            width: 150,
-            height: 150,
+            width: 140,
+            height: 140,
             borderRadius: 75,
             borderWidth: 3,
             borderColor: "#003366",
@@ -141,6 +140,14 @@ export default function PerfilEstudiante() {
         readonlyInput: {
             backgroundColor: "#f5f5f5",
             color: "#aaa",
+        },
+        buttonfoto: {
+            backgroundColor: "#003366",
+            padding: 15,
+            borderRadius: 10,
+            marginBottom: 15,
+            alignItems: "center",
+            alignSelf: 'center',
         },
         button: {
             backgroundColor: "#003366",
@@ -182,6 +189,11 @@ export default function PerfilEstudiante() {
             color: '#000',
             marginTop: 5,
         },
+        description: {
+            fontSize: 16,
+            textAlign: 'center',
+            marginBottom: 10,
+        },
     });
 
     return (
@@ -193,6 +205,9 @@ export default function PerfilEstudiante() {
                 <View style={styles.container}>
                     <Toast/>
                     <Text style={styles.title}>Perfil de Usuario</Text>
+                    <Text style={styles.description}>
+                    Este módulo te permite ver y actualizar tu perfil
+                </Text>
                     <Formik
                         initialValues={{
                             nombre: userData.nombre || '',
@@ -215,7 +230,7 @@ export default function PerfilEstudiante() {
                                         style={styles.profileImage}
                                     />
                                 </View>
-                                <TouchableOpacity style={styles.button} onPress={() => requestCameraPermission(setFieldValue)}>
+                                <TouchableOpacity style={styles.buttonfoto} onPress={() => requestCameraPermission(setFieldValue)}>
                                     <Text style={styles.buttonText}>Actualizar Foto</Text>
                                 </TouchableOpacity>
                                 <ScrollView>

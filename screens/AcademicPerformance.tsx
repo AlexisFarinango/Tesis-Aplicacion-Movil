@@ -17,8 +17,6 @@ export default function Asistencias() {
             fontSize: 24,
             padding: 20,
             fontWeight: "bold",
-            marginBottom: 20,
-
             textAlign: "center",
         },
         tableContainer: {
@@ -121,7 +119,11 @@ export default function Asistencias() {
         },
         grid: {
             paddingHorizontal: 10,
-        paddingVertical: 10,
+            paddingVertical: 10,
+        },
+        description: {
+            fontSize: 16,
+            textAlign: 'center',
         },
     });
 
@@ -177,6 +179,9 @@ export default function Asistencias() {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Actuaciones</Text>
+            <Text style={styles.description}>
+                Este módulo te permite ver las actuaciones y descripciones en los cursos registrados
+            </Text>
             <Toast />
             <FlatList
                 data={cursos}

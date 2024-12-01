@@ -17,18 +17,23 @@ export default function Asistencias() {
             fontSize: 24,
             padding: 20,
             fontWeight: "bold",
-            marginBottom: 20,
             textAlign: "center",
+        },
+        description: {
+            fontSize: 16,
+            textAlign: 'center',
+            marginBottom: 20,
         },
         tableContainer: {
             marginBottom: 20,
         },
         tableHeader: {
-            flexDirection: "row",
-            justifyContent: "flex-start",
+            flexDirection: 'row',
+            justifyContent: 'space-between',
             padding: 10,
-            backgroundColor: "#003366", // Azul oscuro
-            borderRadius: 5,
+            backgroundColor: '#003366',
+            borderTopLeftRadius: 5,
+            borderTopRightRadius: 5,
         },
         headerText: {
             color: "#fff", // Letras blancas
@@ -38,24 +43,22 @@ export default function Asistencias() {
             textAlign: "center",
         },
         headertableText: {
-            color: "#fff", // Letras blancas
-            fontWeight: "bold",
-            fontSize: 14,
-            width: 125,  // Ancho de cada columna (ajustable según necesidad)
-            textAlign: "center",
+            color: '#fff',
+            fontWeight: 'bold',
+            fontSize: 16,
+            textAlign: 'center',
         },
         tableRow: {
-            flexDirection: "row",
-            justifyContent: "flex-start",
+            flexDirection: 'row',
+            justifyContent: 'space-between',
             padding: 10,
-            backgroundColor: "#fff",
+            backgroundColor: '#fff',
             borderBottomWidth: 1,
-            borderBottomColor: "#ccc",
+            borderBottomColor: '#ddd',
         },
         rowText: {
             fontSize: 14,
-            width: 125,  // Ancho de cada columna (ajustable según necesidad)
-            textAlign: "center",
+            textAlign: 'center',
         },
         button: {
             backgroundColor: "#cc0605", // Rojo
@@ -135,16 +138,20 @@ export default function Asistencias() {
         },
         closeButton: {
             backgroundColor: '#cc0605',
-            padding: 10,
-            borderRadius: 5,
-            marginTop: 20,
+            padding: 12,
+            borderRadius: 8,
+            marginTop: 15,
+            width: '30%',
+            alignSelf: 'center',
         },
         closeButtonText: {
             color: '#fff',
+            fontSize: 16,
             fontWeight: 'bold',
+            textAlign: 'center',
         },
         scrollView: {
-            maxHeight: 100,
+            maxHeight: 200,
             width: '100%',
         },
         noDataText: {
@@ -153,6 +160,13 @@ export default function Asistencias() {
             color: 'gray',
             textAlign: 'center',
             marginVertical: 20,
+        },
+        table: {
+            // Estilos de la tabla
+        },
+        descriptiondos: {
+            fontSize: 16,
+            textAlign: 'center',
         },
     });
 
@@ -268,6 +282,9 @@ export default function Asistencias() {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Asistencias</Text>
+            <Text style={styles.descriptiondos}>
+                    Este módulo te permite visualizar las asistencias de los cursos registrados
+                </Text>
             <Toast/>
             <FlatList
                 data={cursos}
@@ -285,21 +302,22 @@ export default function Asistencias() {
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
                         <Text style={styles.title}>Reporte Asistencias</Text>
-                        <Text >Este modulo te permite visualizar las asistencias del estudiante en la materia ...</Text>
+                        <Text style={styles.description}>
+                            Este módulo te permite visualizar las asistencias del estudiante en la materia {selectedMateria}
+                        </Text>
                         {asistencias.length === 0 ? (
                             <Text style={styles.noDataText}>No existen Asistencias por el momento</Text>
                         ) : (
                             <>
                                 <View style={styles.tableHeader}>
-                                    <Text style={styles.headertableText}>Fecha</Text>
-                                    <Text style={styles.headertableText}>Asistencias</Text>
+                                    <Text style={[styles.headertableText, { width: '50%' }]}>Fecha</Text>
+                                    <Text style={[styles.headertableText, { width: '50%' }]}>Asistencias</Text>
                                 </View>
                                 <ScrollView style={styles.scrollView}>
                                     {asistencias.map((fecha, index) => (
                                         <View key={index} style={styles.tableRow}>
-                                            <Text style={styles.rowText}>{fecha}</Text>
-                                            {/* <Text style={styles.rowText}>{horario[index]}</Text> */}
-                                            <Text style={styles.rowText}>{estadoAsistencias[index]}</Text>
+                                            <Text style={[styles.rowText, { width: '50%' }]}>{fecha}</Text>
+                                            <Text style={[styles.rowText, { width: '50%' }]}>{estadoAsistencias[index]}</Text>
                                         </View>
                                     ))}
                                 </ScrollView>

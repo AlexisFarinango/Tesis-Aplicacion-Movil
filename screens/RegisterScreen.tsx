@@ -340,7 +340,7 @@ export default function RegistroEstudiante() {
                                     style={styles.customButton}
                                     onPress={() => requestCameraPermission(setFieldValue)}
                                 >
-                                    <Text style={styles.buttonText}>Capturar Imagen</Text>
+                                    <Text style={styles.buttonText}>Tomar Foto</Text>
                                 </TouchableOpacity>
 
                                 {/* Mostrar imagen capturada */}

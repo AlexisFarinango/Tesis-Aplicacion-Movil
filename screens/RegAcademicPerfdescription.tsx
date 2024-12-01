@@ -10,6 +10,12 @@ import { PermissionsAndroid } from 'react-native';
 import Voice from '@react-native-voice/voice';
 import Toast from 'react-native-toast-message';
 
+// Función para obtener la fecha actual en formato deseado
+const obtenerFechaActual = () => {
+    const ahora = new Date();
+    const opciones = { year: 'numeric', month: 'long', day: 'numeric' };
+    return ahora.toLocaleDateString('es-ES', opciones); // Cambia 'es-ES' según el idioma deseado
+};
 
 export default function DetalleActuaciones() {
     const navigation = useNavigation();
@@ -189,11 +195,10 @@ export default function DetalleActuaciones() {
     };
 
     const abrirModal = (estudiante) => {
-        if (estudiante.descripciones.length >= 5) {
-            alert("Este estudiante ya tiene 5 descripciones.");
+        if (estudiante.descripciones.length >= 3) {
+            alert("Este estudiante ya tiene 3 descripciones.");
             return;
-        };
-        console.log("dato del modal estudiante: ", estudiante.descripciones);
+        }
         setCurrentEstudiante(estudiante);
         setModalVisible(true);
     };
@@ -223,7 +228,7 @@ export default function DetalleActuaciones() {
                     item.estudiante._id === currentEstudiante.estudiante._id
                         ? {
                             ...item,
-                            descripciones: item.descripciones.length < 5
+                            descripciones: item.descripciones.length < 3
                                 ? [...item.descripciones, descripcion]
                                 : item.descripciones,
                         }
@@ -273,13 +278,19 @@ export default function DetalleActuaciones() {
                 type: "success",
                 text1: secondresponse.data.msg
             })
+            setTimeout(() => {
+                Toast.hide(); // Esto cerrará el Toast después de 3 segundos
+            }, 3000);
+            navigation.goBack();
         } catch (error) {
             console.log("Error al realizar la actualización en base", error);
             Toast.show({
                 type: "success",
                 text1: "Error al realizar la actualización en base"
             })
-
+            setTimeout(() => {
+                Toast.hide(); // Esto cerrará el Toast después de 3 segundos
+            }, 3000);
         }
     };
 
@@ -358,8 +369,9 @@ export default function DetalleActuaciones() {
         <View style={styles.container}>
             <Toast />
             <Text style={styles.title}>Detalle Actuaciones</Text>
+            <Text style={styles.fecha}>{obtenerFechaActual()}</Text>
             {actuaciones.length === 0 ? (
-                <Text style={styles.noDataText}>No existen Registros Actuales</Text>
+                <Text style={styles.noDataText}>No existen Registros con la fecha Actual, verifica el Registro de Asistencias</Text>
             ) : (<>
                 <View style={styles.table}>
                     <View style={[styles.tableRow, styles.tableHeaderRow]}>
@@ -371,6 +383,7 @@ export default function DetalleActuaciones() {
                         data={actuaciones}
                         renderItem={renderItem}
                         keyExtractor={(item) => item.estudiante._id.toString()}
+                        contentContainerStyle={{ flexGrow: 1 }}
                     />
                 </View>
 
@@ -380,14 +393,14 @@ export default function DetalleActuaciones() {
                 </TouchableOpacity>
             </>)}
             {actuaciones.length === 0 ? (
-                <TouchableOpacity style={styles.buttonAction} onPress={async () => { navigation.goBack(); }}>
+                <TouchableOpacity style={styles.buttonActiontres} onPress={async () => { navigation.goBack(); }}>
                     <Text style={styles.buttonText}>Regresar</Text>
                 </TouchableOpacity>
             ) : (<>
-                <TouchableOpacity style={styles.buttonAction} onPress={async () => { await GuardaryRegresar(); navigation.goBack(); }}>
-                    <Text style={styles.buttonText}>Regresar y Guardar</Text>
+                <TouchableOpacity style={styles.buttonActiondos} onPress={async () => { await GuardaryRegresar() }}>
+                    <Text style={styles.buttonText}>Guardar</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.buttonAction} onPress={async () => { navigation.goBack(); }}>
+                <TouchableOpacity style={styles.buttonActiontres} onPress={async () => { navigation.goBack(); }}>
                     <Text style={styles.buttonText}>Regresar</Text>
                 </TouchableOpacity>
             </>
@@ -397,13 +410,20 @@ export default function DetalleActuaciones() {
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
                         <Text style={styles.modalTitle}>Añadir Descripción</Text>
+                        <Text style={styles.counterText}>
+                            Número de Descripciones {currentEstudiante ? currentEstudiante.descripciones.length + 1 : 1}/3
+                        </Text>
                         <View style={styles.textBoxContainer}>
                             <View style={styles.textBox}>
-                                <TextInput value={descripcion} onChangeText={setDescripcion} placeholder='Descripción ...' multiline={true} style={styles.textInput}></TextInput>
+                                <TextInput
+                                    value={descripcion}
+                                    onChangeText={setDescripcion}
+                                    placeholder='Descripción de maximo 20 caracteres'
+                                    multiline={true}
+                                    style={styles.textInput}
+                                    maxLength={30}
+                                />
                             </View>
-                            {/* <TouchableOpacity onPress={iniciarDictado} style={styles.micButton}>
-                                <Image source={require('../icons/microfono.png')} style={styles.icon}/>
-                            </TouchableOpacity> */}
                             <TouchableOpacity style={styles.micButton} onPress={handleMicrophonePress}>
                                 <Image source={require('../icons/microfono.png')} style={styles.icon} />
                             </TouchableOpacity>
@@ -412,13 +432,10 @@ export default function DetalleActuaciones() {
                             <Text style={styles.addButtonText}>Añadir</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.retocederfondo} onPress={cerrarModal}>
-                            <Text style={styles.addButtonText}>Regresar sin añadir</Text>
+                            <Text style={styles.addButtonText}>Cancelar</Text>
                         </TouchableOpacity>
-
                     </View>
-
                 </View>
-
             </Modal>
         </View>
     );
@@ -434,6 +451,12 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         textAlign: 'center',
+        marginBottom: 5,
+    },
+    fecha: {
+        fontSize: 16,
+        textAlign: 'center',
+        color: '#666',
         marginBottom: 20,
     },
     table: {
@@ -455,6 +478,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         borderBottomWidth: 1,
         borderBottomColor: '#eee',
+        width: '100%',
     },
     tableHeaderRow: {
         backgroundColor: '#4A90E2',
@@ -475,18 +499,42 @@ const styles = StyleSheet.create({
     },
     actionsCell: {
         flexDirection: 'row',
-        justifyContent: 'center',
+        justifyContent: 'space-evenly',
         alignItems: 'center',
+        flex: 1,
     },
     icon: {
         width: 30,   // Tamaño de los iconos
         height: 30,
-        marginHorizontal: 5,
     },
     buttonAction: {
         marginTop: 20,
         padding: 15,
         backgroundColor: '#4A90E2',
+        borderRadius: 30,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 5 },
+        shadowOpacity: 0.2,
+        shadowRadius: 5,
+        elevation: 5,
+    },
+    buttonActiondos: {
+        marginTop: 20,
+        padding: 15,
+        backgroundColor: '#00C853',
+        borderRadius: 30,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 5 },
+        shadowOpacity: 0.2,
+        shadowRadius: 5,
+        elevation: 5,
+    },
+    buttonActiontres: {
+        marginTop: 20,
+        padding: 15,
+        backgroundColor: '#e52510',
         borderRadius: 30,
         alignItems: 'center',
         shadowColor: '#000',
@@ -567,5 +615,18 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         width: '50%',
         alignItems: 'center',
+    },
+    noDataText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: 'gray',
+        textAlign: 'center',
+        marginVertical: 20,
+    },
+    counterText: {
+        fontSize: 16,
+        textAlign: 'center',
+        marginBottom: 10,
+        color: '#666',
     },
 });

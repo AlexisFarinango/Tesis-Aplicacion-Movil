@@ -56,11 +56,15 @@ export default function DetallesActuaciones() {
     const renderItem = ({ item, index }) => (
         <View style={styles.tableRow}>
             <Text style={styles.tableCell}>{item}</Text>
-            <TouchableOpacity onPress={() => handleDescriptionPress(index)}>
-                <Text style={[
-                    styles.tableCell,
-                    detalles[index] && detalles[index].length > 0 ? styles.link : styles.noLink
-                ]}>
+            <TouchableOpacity 
+                style={[
+                    styles.tableCellButton, 
+                    detalles[index] && detalles[index].length > 0 ? styles.verButton : styles.sinButton
+                ]} 
+                onPress={() => handleDescriptionPress(index)}
+                disabled={!detalles[index] || detalles[index].length === 0}
+            >
+                <Text style={styles.buttonText}>
                     {detalles[index] && detalles[index].length > 0 ? 'Ver Descripción' : 'Sin Descripción'}
                 </Text>
             </TouchableOpacity>
@@ -70,49 +74,40 @@ export default function DetallesActuaciones() {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Detalle Actuaciones{"\n"} Semestre {semestre}</Text>
-            {/* <View style={styles.table}>
-                <View style={[styles.tableRow, styles.tableHeaderRow]}>
-                    <Text style={styles.tableHeader}>Fecha</Text>
-                    <Text style={styles.tableHeader}>Descripciones</Text>
+            <View style={styles.tableContainer}>
+                <View style={styles.table}>
+                    <View style={styles.tableHeader}>
+                        <Text style={[styles.headerText, { width: '50%' }]}>Fecha</Text>
+                        <Text style={[styles.headerText, { width: '50%' }]}>Descripciones</Text>
+                    </View>
+                    <FlatList
+                        data={fechas}
+                        renderItem={({ item, index }) => (
+                            <View style={styles.tableRow}>
+                                <Text style={[styles.tableCell, { width: '50%' }]}>{item}</Text>
+                                <TouchableOpacity 
+                                    style={[
+                                        styles.tableCellButton, 
+                                        detalles[index] && detalles[index].length > 0 ? styles.verButton : styles.sinButton
+                                    ]} 
+                                    onPress={() => handleDescriptionPress(index)}
+                                    disabled={!detalles[index] || detalles[index].length === 0}
+                                >
+                                    <Text style={styles.buttonText}>
+                                        {detalles[index] && detalles[index].length > 0 ? 'Ver Descripción' : 'Sin Descripción'}
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                        keyExtractor={(item, index) => index.toString()}
+                        style={styles.flatList}
+                    />
                 </View>
-                <FlatList
-                    data={fechas}
-                    renderItem={renderItem}
-                    keyExtractor={(item, index) => index.toString()}
-                    style={{ flexGrow: 1 }}
-                />
+
+                <View style={styles.totalContainer}>
+                    <Text style={styles.totalText}>Actuaciones Durante el Semestre: {totalactuaciones}</Text>
+                </View>
             </View>
-            <View style={styles.table}>
-                <View style={[styles.tableRow, styles.tableHeaderRow]}>
-                    <Text style={styles.tableHeader}>Actuaciones Totales: {totalactuaciones}</Text>
-                </View>
-            </View> */}
-            {fechas.length === 0 ? (
-                <Text style={styles.noDataText}>No existen Actuaciones por el momento</Text>
-            ) : (
-                <>
-                    <View style={styles.table}>
-                        <View style={[styles.tableRow, styles.tableHeaderRow]}>
-                            <Text style={styles.tableHeader}>Fecha</Text>
-                            <Text style={styles.tableHeader}>Descripciones</Text>
-                        </View>
-                        <FlatList
-                            data={fechas}
-                            renderItem={renderItem}
-                            keyExtractor={(item, index) => index.toString()}
-                            style={{ flexGrow: 1 }}
-                        />
-                    </View>
-
-                    <View style={styles.table}>
-                        <View style={[styles.tableRow, styles.tableHeaderRow]}>
-                            <Text style={styles.tableHeader}>Actuaciones Totales: {totalactuaciones}</Text>
-                        </View>
-                    </View>
-                </>
-            )}
-
-
 
             <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
                 <Text style={styles.buttonText}>Regresar</Text>
@@ -126,29 +121,28 @@ export default function DetallesActuaciones() {
             >
                 <View style={styles.modalBackground}>
                     <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>Descripciones</Text>
+                        <Text style={[styles.modalTitle,{ textAlign: 'center' }]}>Descripciones</Text>
                         <View style={styles.table}>
                             <View style={[styles.tableRow, styles.tableHeaderRow]}>
-                                <Text style={styles.tableHeader}>Detalles</Text>
+                                <Text style={[styles.tableHeader, { width: '100%' },{ flex: 1, textAlign: 'center', color: '#333',fontWeight: 'bold', }]}>Detalles</Text>
                             </View>
                             {selectedDescriptions.length > 0 ? (
                                 Array.isArray(selectedDescriptions) ? (
                                     selectedDescriptions.map((descripcion, index) => (
                                         <View key={index} style={styles.tableRow}>
-                                            <Text style={styles.tableCell}>{descripcion}</Text>
+                                            <Text style={[styles.tableCell, { width: '100%' }]}>{descripcion}</Text>
                                         </View>
                                     ))
                                 ) : (
                                     <View style={styles.tableRow}>
-                                        <Text style={styles.tableCell}>{selectedDescriptions}</Text>
+                                        <Text style={[styles.tableCell, { width: '100%' }]}>{selectedDescriptions}</Text>
                                     </View>
                                 )
                             ) : (
                                 <View style={styles.tableRow}>
-                                    <Text style={styles.tableCell}>Sin descripciones</Text>
+                                    <Text style={[styles.tableCell, { width: '100%' }]}>Sin descripciones</Text>
                                 </View>
                             )}
-
                         </View>
 
                         <TouchableOpacity
@@ -204,11 +198,11 @@ const styles = StyleSheet.create({
         backgroundColor: "rgba(0, 0, 0, 0.5)",
     },
     modalContent: {
-        width: '80%',
-        backgroundColor: "#fff",
+        backgroundColor: '#fff',
         borderRadius: 10,
         padding: 20,
-        alignItems: "center",
+        width: '90%',
+        maxHeight: '80%',
     },
     modalTitle: {
         fontSize: 20,
@@ -218,38 +212,31 @@ const styles = StyleSheet.create({
     },
     table: {
         width: '100%',
-        borderRadius: 10,
-        backgroundColor: '#fff',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 5 },
-        shadowOpacity: 0.1,
-        shadowRadius: 10,
-        elevation: 5,
-        overflow: 'hidden',
+        marginVertical: 10,
     },
     tableRow: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
-        paddingVertical: 10,
-        paddingHorizontal: 15,
+        justifyContent: 'flex-start',
+        padding: 10,
         borderBottomWidth: 1,
-        borderBottomColor: '#eee',
+        borderBottomColor: '#ddd',
     },
     tableHeaderRow: {
         backgroundColor: '#4A90E2',
+        borderTopLeftRadius: 10,
+        borderTopRightRadius: 10,
+        
     },
     tableHeader: {
-        flex: 1,
-        fontWeight: 'bold',
         color: '#fff',
-        textAlign: 'center',
+        fontWeight: 'bold',
         fontSize: 16,
+        
     },
     tableCell: {
-        flex: 1,
-        textAlign: 'center',
-        fontSize: 16,
+        fontSize: 14,
         color: '#333',
+        textAlign: 'left',
     },
     closeButton: {
         marginTop: 20,
@@ -269,5 +256,77 @@ const styles = StyleSheet.create({
         color: 'gray',
         textAlign: 'center',
         marginVertical: 20,
+    },
+    tableContainer: {
+        flex: 1,
+        marginHorizontal: 10,
+        marginVertical: 15,
+    },
+    table: {
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    tableHeader: {
+        flexDirection: 'row',
+        backgroundColor: '#4A90E2',
+        padding: 12,
+        borderTopLeftRadius: 10,
+        borderTopRightRadius: 10,
+    },
+    headerText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 16,
+        textAlign: 'center',
+    },
+    tableRow: {
+        flexDirection: 'row',
+        borderBottomWidth: 1,
+        borderBottomColor: '#eee',
+        padding: 12,
+    },
+    tableCell: {
+        textAlign: 'center',
+        fontSize: 15,
+    },
+    tableCellButton: {
+        padding: 8,
+        borderRadius: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '45%',
+        alignSelf: 'center',
+    },
+    verButton: {
+        backgroundColor: '#00C853',
+    },
+    sinButton: {
+        backgroundColor: '#FF1744',
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 14,
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+    flatList: {
+        maxHeight: '80%',
+    },
+    totalContainer: {
+        backgroundColor: '#4A90E2',
+        padding: 12,
+        borderRadius: 10,
+        marginTop: 10,
+    },
+    totalText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 16,
+        textAlign: 'center',
     },
 });

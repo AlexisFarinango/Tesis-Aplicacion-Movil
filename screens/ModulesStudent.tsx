@@ -43,7 +43,7 @@ export default function ModulosEstudiantes() {
                 data={data}
                 renderItem={renderItem}
                 keyExtractor={item => item.id.toString()}
-                numColumns={2}
+                numColumns={1}
                 columnWrapperStyle={styles.row}
                 contentContainerStyle={styles.grid}
             />
@@ -85,11 +85,12 @@ const styles = StyleSheet.create({
         marginVertical: 20,
     },
     grid: {
-        paddingHorizontal: 20,
+        paddingHorizontal: 10,
+        paddingVertical: 10,
     },
-    row: {
-        justifyContent: 'space-between',
-    },
+    // row: {
+    //     justifyContent: 'space-between',
+    // },
     card: {
         backgroundColor: '#FFF',
         flex: 1,
@@ -103,7 +104,8 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.2,
         shadowRadius: 1.41,
         elevation: 2,
-
+        width: '95%', // Ajustado para una columna
+        alignSelf: 'center', // Centra la tarjeta
     },
     highlight: {
         backgroundColor: '#FFEBB0',

@@ -31,7 +31,7 @@ export default function ModulosDocentes() {
                 data={data}
                 renderItem={renderItem}
                 keyExtractor={item => item.id.toString()}
-                numColumns={2}
+                numColumns={1}
                 columnWrapperStyle={styles.row}
                 contentContainerStyle={styles.grid}
             />
@@ -65,10 +65,8 @@ const styles = StyleSheet.create({
         marginVertical: 20,
     },
     grid: {
-        paddingHorizontal: 20,
-    },
-    row: {
-        justifyContent: 'space-between',
+        paddingHorizontal: 10,
+        paddingVertical: 10,
     },
     card: {
         backgroundColor: '#FFF',
@@ -83,6 +81,8 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.2,
         shadowRadius: 1.41,
         elevation: 2,
+        width: '95%', // Ajustado para una columna
+        alignSelf: 'center', // Centra la tarjeta
 
     },
     highlight: {

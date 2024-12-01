@@ -83,6 +83,9 @@ export default function Materias() {
         <View style={styles.container}>
             <View style={styles.container2}>
                 <Text style={styles.title}>Cursos Asignados</Text>
+                <Text style={styles.description}>
+                    Este módulo te permite mediante código registrarte a un curso
+                </Text>
                 <Toast />
                 <View style={styles.cursoinput}>
                     <View style={styles.inputColumn}>
@@ -153,7 +156,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#333',
         textAlign: 'center',
-        marginBottom: 20,
     },
     input: {
         backgroundColor: '#FFF',
@@ -163,20 +165,6 @@ const styles = StyleSheet.create({
         borderColor: '#DDD',
         fontSize: 16,
         marginBottom: 15,
-    },
-    addButton2: {
-        flex: 1, // Hace que el input ocupe el resto del espacio disponible
-        height: '100%', // Altura del TextInput
-        backgroundColor: '#007BFF',
-        alignItems: 'center',
-        borderRadius: 10,
-        padding: 5,
-    },
-    addButtonText: {
-        color: '#FFF',
-        fontSize: 16,
-        fontWeight: 'bold',
-        paddingTop:10
     },
     cursosContainer: {
         flex: 1,
@@ -257,5 +245,10 @@ const styles = StyleSheet.create({
         color: '#FFF',
         fontSize: 14, // Texto más pequeño
         fontWeight: 'bold',
+    },
+    description: {
+        fontSize: 16,
+        textAlign: 'center',
+        marginBottom: 5,
     },
 });
