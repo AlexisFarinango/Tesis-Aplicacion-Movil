@@ -130,6 +130,8 @@ export default function Login() {
 
 
   const handleLogin = async () => {
+    console.log("nuevo",API_URL_BACKEND);
+    
     if (!email || !password) {
       Toast.show({
         type: 'error',
