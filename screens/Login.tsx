@@ -1,6 +1,6 @@
-import { useNavigation,useFocusEffect } from "@react-navigation/native";
-import React, { useContext, useState,useCallback } from "react";
-import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image, BackHandler } from "react-native"
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import React, { useContext, useState, useCallback } from "react";
+import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image, BackHandler, Dimensions } from "react-native"
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL_BACKEND } from '@env'
@@ -8,7 +8,6 @@ import { jwtDecode } from "jwt-decode";
 import { AuthContext } from "../context/AuthContext";
 import Toast from "react-native-toast-message";
 import RNMinimizeApp from 'react-native-minimize';
-
 
 
 const styles = StyleSheet.create({
@@ -107,34 +106,35 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   // const [user, setUser] = useState("")
-  const { login,setNamedocente } = useContext(AuthContext);
+  const { login, setNamedocente } = useContext(AuthContext);
   const navigation = useNavigation();
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const { width } = Dimensions.get('window');
+  const scaleFactor = width < 400 ? 0.6 : 2.0; // Aumenta el factor de escala para pantallas más grandes
 
   useFocusEffect(
     useCallback(() => {
-        const handleBackPress = () => {
-            RNMinimizeApp.minimizeApp(); // Envía la aplicación al fondo
-            return true; // Previene el comportamiento predeterminado
-        };
+      const handleBackPress = () => {
+        RNMinimizeApp.minimizeApp(); // Envía la aplicación al fondo
+        return true; // Previene el comportamiento predeterminado
+      };
 
-        BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+      BackHandler.addEventListener('hardwareBackPress', handleBackPress);
 
-        // Limpia el listener cuando se pierde el enfoque
-        return () => {
-            BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
-        };
+      // Limpia el listener cuando se pierde el enfoque
+      return () => {
+        BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
+      };
     }, [])
-);
-
+  );
 
 
   const handleLogin = async () => {
     if (!email || !password) {
       Toast.show({
         type: 'error',
-            text1: `Lo sentimos, todos los campos deben de estar llenos`,
-            text2: "Completa los campos"
+        text1: `Lo sentimos, todos los campos deben de estar llenos`,
+        text2: "Completa los campos"
       })
       return;
     }
@@ -148,7 +148,7 @@ export default function Login() {
 
         const { token } = response.data;
         setNamedocente(response.data.nombre)
-        
+
         await AsyncStorage.setItem('userToken', token);
         login(token);
         // const decodedToken = jwtDecode(token);
@@ -157,7 +157,6 @@ export default function Login() {
         const user = jwtDecode(token);
         console.log(user);
         // setUser(decoded);
-
 
         if (user.rol === 'docente') {
           navigation.navigate("Docente");
@@ -172,23 +171,23 @@ export default function Login() {
             type: 'error',
             text1: `Cuenta no Verificada`,
           })
-        }else if(status === 404){
+        } else if (status === 404) {
           Toast.show({
             type: 'error',
             text1: `Docente no registrado`,
             text2: "Verifica el correo ingresado",
           })
-        }else if(status === 401){
+        } else if (status === 401) {
           Toast.show({
             type: 'error',
             text1: `Correo o contraseña Incorrecto`,
           })
-        }else{
-            Toast.show({
-              type: 'error',
-              text1: `Problemas con el Servidor`,
-              text2: `Revisa tu conexión a Internet`,
-            })
+        } else {
+          Toast.show({
+            type: 'error',
+            text1: `Problemas con el Servidor`,
+            text2: `Revisa tu conexión a Internet`,
+          })
         }
         // Si también falla el login de docente, mostramos un mensaje de error
         // alert("Usuario o contraseña incorrectos.");
@@ -224,37 +223,37 @@ export default function Login() {
             text1: `Cuenta no Verificada`,
             text2: `Contactate con tu docente`,
           })
-        }else if(status === 404){
+        } else if (status === 404) {
           Toast.show({
             type: 'error',
             text1: `Estudiante no registrado`,
             text2: "Verifica el correo ingresado",
           })
-        }else if(status === 401){
+        } else if (status === 401) {
           Toast.show({
             type: 'error',
             text1: `Correo o contraseña Incorrecto`,
           })
-        }else{
-            Toast.show({
-              type: 'error',
-              text1: `Problemas con el Servidor`,
-              text2: `Revisa tu conexión a Internet`,
-            })
+        } else {
+          Toast.show({
+            type: 'error',
+            text1: `Problemas con el Servidor`,
+            text2: `Revisa tu conexión a Internet`,
+          })
         }
       }
     }
   };
 
-
   return (
     <View style={styles.container}>
       <Image
         source={require('../icons/logo.webp')}
-        style={styles.profileImage}
+        style={[styles.profileImage, { width: 140 * scaleFactor, height: 140 * scaleFactor }]}
       />
-      <Text style={styles.title}>Iniciar Sesión</Text>
-      <TextInput style={styles.input}
+      <Text style={[styles.title, { fontSize: 36 * scaleFactor }]}>Iniciar Sesión</Text>
+      <TextInput 
+        style={[styles.input, { fontSize: 24 * scaleFactor }]} 
         placeholder="Correo Institucional"
         placeholderTextColor={"#888"}
         keyboardType="email-address"
@@ -262,7 +261,7 @@ export default function Login() {
         onChangeText={(text) => setEmail(text)}
       />
       <TextInput
-        style={styles.input}
+        style={[styles.input, { fontSize: 24 * scaleFactor }]} 
         placeholder="Contraseña"
         placeholderTextColor={"#888"}
         secureTextEntry={!passwordVisible}
@@ -270,11 +269,11 @@ export default function Login() {
         onChangeText={(text) => setPassword(text)}
       />
       <View style={styles.checkboxContainer}>
-        <Text style={styles.helperText}>
+        <Text style={[styles.helperText, { fontSize: 20 * scaleFactor }]}>
           {passwordVisible ? "Contraseña visible" : "Contraseña oculta"}
         </Text>
         <TouchableOpacity
-          onPress={() => setPasswordVisible(!passwordVisible)} // Alterna la visibilidad
+          onPress={() => setPasswordVisible(!passwordVisible)}
           style={styles.checkbox}>
           <View style={passwordVisible ? styles.checkboxChecked : styles.checkboxUnchecked} />
         </TouchableOpacity>
@@ -282,17 +281,18 @@ export default function Login() {
       <TouchableOpacity
         style={styles.button}
         onPress={handleLogin}
-      ><Text style={styles.buttonText}>Ingresar</Text>
+      >
+        <Text style={[styles.buttonText, { fontSize: 24 * scaleFactor }]}>Ingresar</Text>
       </TouchableOpacity>
       <View style={styles.footer}>
         <TouchableOpacity onPress={() => navigation.navigate('Recuperar Contraseña')}>
-          <Text style={{ color: "#666666", }}>¿Has olvidado la Contraseña?</Text>
+          <Text style={{ color: "#666666", fontSize: 14 }}>¿Has olvidado la Contraseña?</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.footer}>
-        <Text style={styles.footerText}>¿No tienes cuenta?</Text>
+        <Text style={[styles.footerText, { fontSize: 14 }]}>¿No tienes cuenta?</Text>
         <TouchableOpacity onPress={() => navigation.navigate('Registro')}>
-          <Text style={styles.footerLink}>Regístrate aquí</Text>
+          <Text style={[styles.footerLink, { fontSize: 14 }]}>Regístrate aquí</Text>
         </TouchableOpacity>
       </View>
       <Toast />
