@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { Modal, TouchableOpacity, Button, Image, PermissionsAndroid, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Modal, TouchableOpacity, Button, Image, PermissionsAndroid, ScrollView, StyleSheet, Text, TextInput, View, Dimensions } from "react-native";
 import { launchCamera } from "react-native-image-picker";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import axios from "axios";
@@ -37,6 +37,8 @@ export default function RegistroEstudiante() {
     const navigation = useNavigation();
     const [imageError, setImageError] = useState('');
     const [isModalVisible, setIsModalVisible] = useState(true);
+    const { width, height } = Dimensions.get('window');
+    const scaleFactor = width < 400 ? 0.8 : 1;
 
 
     // Solicitar permiso de cámara y capturar foto
@@ -185,40 +187,46 @@ export default function RegistroEstudiante() {
                 animationType="slide"
                 onRequestClose={() => setIsModalVisible(false)}
             >
-                <View style={styles.modalContainer}>
-                    <Text style={styles.modalTitle}>
-                    Para comenzar con su registro, por favor asegúrese de lo siguiente al tomarse su fotografía
-                    </Text>
-                    <Image source={require('../icons/camara.png')} style={styles.modalImage} />
-                    <Text style={styles.modalText}>🔹 Su rostro debe observarse por completo y no debe tener accesorios</Text>
-                    <Text style={styles.modalText}>🔹 Recuerda estar en un lugar iluminado</Text>
-                    <Text style={styles.modalText}>🔹 Procura que la fotografía sea lo más clara posible</Text>
-                    <Text style={styles.modalText}>
-                    ⚠️Este proceso es único y debe realizarse solo si cumples las condiciones mencionadas, para que tu usuario funcione correctamente.⚠️
-                    </Text>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <TouchableOpacity
-                            style={styles.modalButton}
-                            onPress={() => {
-                                setIsModalVisible(false); // Cierra el modal
-                            }}
-                        >
-                            <Text style={styles.buttonText}>Entendido</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={styles.modalButtonregresar}
-                            onPress={() => {
-                                setIsModalVisible(false); // Cierra el modal
-                                navigation.goBack(); // Retrocede a la página anterior
-                            }}
-                        >
-                            <Text style={styles.buttonText}>Realizar registro en otro momento</Text>
-                        </TouchableOpacity>
+                <View style={{ flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.9)' }}>
+                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        <View style={{ width: '90%', backgroundColor: 'white', borderRadius: 10, padding: 20 }}>
+                            <Text style={[styles.modalTitle, { fontSize: 24 * scaleFactor, color: 'black' }]}>
+                                Para comenzar con su registro, por favor asegúrese de lo siguiente al tomarse su fotografía
+                            </Text>
+                            <View style={{ alignItems: 'center', marginVertical: 10 }}>
+                                <Image source={require('../icons/camara.png')} style={[styles.modalImage, { width: 120 * scaleFactor, height: 120 * scaleFactor }]} />
+                            </View>
+                            <Text style={[styles.modalText, { fontSize: 18 * scaleFactor, color: 'black' }]}>🔹 Su rostro debe observarse por completo y no debe tener accesorios</Text>
+                            <Text style={[styles.modalText, { fontSize: 18 * scaleFactor, color: 'black' }]}>🔹 Recuerda estar en un lugar iluminado</Text>
+                            <Text style={[styles.modalText, { fontSize: 18 * scaleFactor, color: 'black' }]}>🔹 Procura que la fotografía sea lo más clara posible</Text>
+                            <Text style={[styles.modalText, { fontSize: 18 * scaleFactor, color: 'black' }]}>
+                                ⚠️Este proceso es único y debe realizarse solo si cumples las condiciones mencionadas, para que tu usuario funcione correctamente.⚠️
+                            </Text>
+                            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
+                                <TouchableOpacity
+                                    style={styles.modalButton}
+                                    onPress={() => {
+                                        setIsModalVisible(false); // Cierra el modal
+                                    }}
+                                >
+                                    <Text style={[styles.buttonText, { fontSize: 18 * scaleFactor, textAlign: 'center' }]}>Entendido</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={styles.modalButtonregresar}
+                                    onPress={() => {
+                                        setIsModalVisible(false); // Cierra el modal
+                                        navigation.goBack(); // Retrocede a la página anterior
+                                    }}
+                                >
+                                    <Text style={[styles.buttonText, { fontSize: 18 * scaleFactor, textAlign: 'center' }]}>Realizar registro en otro momento</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
                     </View>
                 </View>
             </Modal>
             <View>
-                <Text style={styles.title}>Nuevo Estudiante</Text>
+                <Text style={[styles.title, { fontSize: 28 * scaleFactor }]}>Nuevo Estudiante</Text>
             </View>
             <View style={{ flex: 1 }}>
                 <ScrollView contentContainerStyle={styles.container}>
@@ -246,7 +254,9 @@ export default function RegistroEstudiante() {
                             <>
                                 <Text style={styles.labeldos}>Nombres:</Text>
                                 <TextInput
-                                    style={styles.input}
+                                    style={[styles.input, { fontSize: 18 * scaleFactor }]}
+                                    placeholder="Ingresa tu nombre"
+                                    placeholderTextColor={"#888"}
                                     onChangeText={text => {
                                         if (text.length <= 30) {
                                             handleChange('nombre')(text)
@@ -254,13 +264,14 @@ export default function RegistroEstudiante() {
                                     }}
                                     onBlur={handleBlur('nombre')}
                                     value={values.nombre}
-                                    placeholder="Ingresa tu nombre"
                                 />
                                 {touched.nombre && errors.nombre && <Text style={styles.error}>{errors.nombre}</Text>}
 
                                 <Text style={styles.labeldos}>Apellidos:</Text>
                                 <TextInput
-                                    style={styles.input}
+                                    style={[styles.input, { fontSize: 18 * scaleFactor }]}
+                                    placeholder="Ingresa tu apellido"
+                                    placeholderTextColor={"#888"}
                                     onChangeText={text => {
                                         if (text.length <= 30) {
 
@@ -269,13 +280,14 @@ export default function RegistroEstudiante() {
                                     }}
                                     onBlur={handleBlur('apellido')}
                                     value={values.apellido}
-                                    placeholder="Ingresa tu apellido"
                                 />
                                 {touched.apellido && errors.apellido && <Text style={styles.error}>{errors.apellido}</Text>}
 
                                 <Text style={styles.labeldos}>Cédula:</Text>
                                 <TextInput
-                                    style={styles.input}
+                                    style={[styles.input, { fontSize: 18 * scaleFactor }]}
+                                    placeholder="Ingresa tu cédula"
+                                    placeholderTextColor={"#888"}
                                     onChangeText={text => {
                                         if (text.length <= 10) {
 
@@ -284,14 +296,15 @@ export default function RegistroEstudiante() {
                                     }}
                                     onBlur={handleBlur('cedula')}
                                     value={values.cedula}
-                                    placeholder="Ingresa tu cédula"
                                     keyboardType="numeric"
                                 />
                                 {touched.cedula && errors.cedula && <Text style={styles.error}>{errors.cedula}</Text>}
 
                                 <Text style={styles.labeldos}>Correo Institucional:</Text>
                                 <TextInput
-                                    style={styles.input}
+                                    style={[styles.input, { fontSize: 18 * scaleFactor }]}
+                                    placeholder="Ingresa tu correo"
+                                    placeholderTextColor={"#888"}
                                     onChangeText={text => {
                                         if (text.length <= 50) {
                                             handleChange('email')(text)
@@ -299,7 +312,6 @@ export default function RegistroEstudiante() {
                                     }}
                                     onBlur={handleBlur('email')}
                                     value={values.email}
-                                    placeholder="Ingresa tu correo"
                                 />
                                 {touched.email && errors.email && <Text style={styles.error}>{errors.email}</Text>}
 
@@ -308,10 +320,10 @@ export default function RegistroEstudiante() {
                                 <View style={styles.passwordContainer}>
                                     <Text style={styles.prefix}>EST</Text>
                                     <TextInput
-                                        style={styles.inputpassword}
+                                        style={[styles.inputpassword, { fontSize: 18 * scaleFactor }]}
                                         placeholder="Ingresa tu contraseña"
-                                        secureTextEntry={!passwordVisible} // Cambia la visibilidad
-                                        // onChangeText={handleChange('password')}
+                                        placeholderTextColor={"#888"}
+                                        secureTextEntry={!passwordVisible}
                                         onChangeText={text => {
                                             // Verifica si el texto contiene espacios
                                             if (text.includes(' ')) {
@@ -359,7 +371,9 @@ export default function RegistroEstudiante() {
 
                                 <Text style={styles.labeldos}>Dirección:</Text>
                                 <TextInput
-                                    style={styles.input}
+                                    style={[styles.input, { fontSize: 18 * scaleFactor }]}
+                                    placeholder="Ingresa tu dirección"
+                                    placeholderTextColor={"#888"}
                                     onChangeText={text => {
                                         if (text.length <= 30) {
                                             handleChange('direccion')(text)
@@ -367,13 +381,14 @@ export default function RegistroEstudiante() {
                                     }}
                                     onBlur={handleBlur('direccion')}
                                     value={values.direccion}
-                                    placeholder="Ingresa tu dirección"
                                 />
                                 {touched.direccion && errors.direccion && <Text style={styles.error}>{errors.direccion}</Text>}
 
                                 <Text style={styles.labeldos}>Ciudad:</Text>
                                 <TextInput
-                                    style={styles.input}
+                                    style={[styles.input, { fontSize: 18 * scaleFactor }]}
+                                    placeholder="Ingresa tu ciudad"
+                                    placeholderTextColor={"#888"}
                                     onChangeText={text => {
                                         if (text.length <= 30) {
                                             handleChange('ciudad')(text)
@@ -381,13 +396,14 @@ export default function RegistroEstudiante() {
                                     }}
                                     onBlur={handleBlur('ciudad')}
                                     value={values.ciudad}
-                                    placeholder="Ingresa tu ciudad"
                                 />
                                 {touched.ciudad && errors.ciudad && <Text style={styles.error}>{errors.ciudad}</Text>}
 
                                 <Text style={styles.labeldos}>Teléfono:</Text>
                                 <TextInput
-                                    style={styles.input}
+                                    style={[styles.input, { fontSize: 18 * scaleFactor }]}
+                                    placeholder="Ingresa tu teléfono"
+                                    placeholderTextColor={"#888"}
                                     onChangeText={text => {
                                         if (text.length <= 10) {
                                             handleChange('telefono')(text);
@@ -395,7 +411,6 @@ export default function RegistroEstudiante() {
                                     }}
                                     onBlur={handleBlur('telefono')}
                                     value={values.telefono}
-                                    placeholder="Ingresa tu teléfono"
                                     keyboardType="numeric"
                                 />
                                 {touched.telefono && errors.telefono && <Text style={styles.error}>{errors.telefono}</Text>}
@@ -415,7 +430,7 @@ export default function RegistroEstudiante() {
                                     style={styles.button}
                                     onPress={handleSubmit}
                                 >
-                                    <Text style={styles.buttonText}>Enviar</Text>
+                                    <Text style={[styles.buttonText, { fontSize: 20 * scaleFactor }]}>Enviar</Text>
                                 </TouchableOpacity>
                             </>
                         )}
