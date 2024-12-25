@@ -12,6 +12,7 @@ import axios from "axios";
 import { API_URL_BACKEND } from '@env';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { KeyboardAvoidingView, Platform } from 'react-native';
+import FastImage from 'react-native-fast-image';
 
 // Función para formatear fecha
 const formatearfecha = (fechaISO) => {
@@ -260,6 +261,7 @@ export default function PerfilEstudiante() {
                                     <Image
                                         source={{
                                             uri: userData.fotografia,
+                                            priority: FastImage.priority.normal,
                                         }}
                                         style={styles.profileImage}
                                     />
