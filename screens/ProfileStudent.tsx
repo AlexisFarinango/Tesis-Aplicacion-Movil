@@ -249,7 +249,7 @@ export default function PerfilEstudiante() {
                             direccion: userData.direccion || '',
                             ciudad: userData.ciudad || '',
                             telefono: userData.telefono || '',
-                            fotografia: userData.fotografia || '',
+                            // fotografia: userData.fotografia || '',
                         }}
                         validationSchema={validationSchema}
                         onSubmit={handleUpdate}
@@ -259,7 +259,7 @@ export default function PerfilEstudiante() {
                                 <View style={styles.imageContainer}>
                                     <Image
                                         source={{
-                                            uri: values.fotografia || "https://img.freepik.com/vector-premium/icono-perfil-usuario-estilo-plano-ilustracion-vector-avatar-miembro-sobre-fondo-aislado-concepto-negocio-signo-permiso-humano_157943-15752.jpg",
+                                            uri: userData.fotografia,
                                         }}
                                         style={styles.profileImage}
                                     />
