@@ -203,7 +203,11 @@ export default function DetalleActuaciones() {
 
     const abrirModal = (estudiante) => {
         if (estudiante.descripciones.length >= 3) {
-            alert("Este estudiante ya tiene 3 descripciones.");
+            // alert("Este estudiante ya tiene 3 descripciones.");
+            Toast.show({
+                type: "error",
+                text1: "Este estudiante ya tiene 3 descripciones."
+            })
             return;
         }
         setCurrentEstudiante(estudiante);

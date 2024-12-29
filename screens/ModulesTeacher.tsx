@@ -8,7 +8,7 @@ import { AuthContext } from '../context/AuthContext';
 import RNMinimizeApp from 'react-native-minimize';
 
 const data = [
-    { id: 1, title: 'Registrar Actuaciones', icon: require('../icons/asistencias.png'), screen:'Ver Actuaciones'},
+    { id: 1, title: 'Actuaciones', icon: require('../icons/asistencias.png'), screen:'Ver Actuaciones'},
 ];
 
 export default function ModulosDocentes() {

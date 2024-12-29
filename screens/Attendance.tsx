@@ -198,11 +198,17 @@ export default function Asistencias() {
             });
             setCursos(response.data.informacionCursos)
         } catch (error) {
-            Toast.show({
-                type: "error",
-                text1: "No se encontraron cursos",
-                text2: "Registrate en un Curso"
-            });
+            if (error.response && error.response.status === 404) {
+                Toast.show({
+                    type: "error",
+                    text1: "No se encontraron cursos",
+                });
+            } else {
+                Toast.show({
+                    type: "error",
+                    text1: "Error",
+                });
+            }
             console.log("Error al obtener los cursos:", error);
         }
     };

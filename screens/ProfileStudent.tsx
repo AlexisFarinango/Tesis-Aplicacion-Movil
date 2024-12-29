@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Text, View, StyleSheet, Image, TouchableOpacity, TextInput, PermissionsAndroid } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
@@ -47,6 +47,8 @@ export default function PerfilEstudiante() {
     const { userData, datosusuario } = useContext(AuthContext);
     console.log("datos del perfil", userData);
 
+    const [loadingImage, setLoadingImage] = useState(true);
+    const [imageError, setImageError] = useState(false);
 
     const handleUpdate = async (values) => {
         try {
@@ -258,13 +260,20 @@ export default function PerfilEstudiante() {
                         {({ handleChange, handleBlur, handleSubmit, values, setFieldValue, errors, touched }) => (
                             <>
                                 <View style={styles.imageContainer}>
-                                    <Image
+                                    {loadingImage && !imageError && <Text>Cargando Fotografía...</Text>}
+                                    <FastImage
                                         source={{
                                             uri: userData.fotografia,
                                             priority: FastImage.priority.normal,
                                         }}
                                         style={styles.profileImage}
+                                        onLoadEnd={() => setLoadingImage(false)}
+                                        onError={() => {
+                                            setLoadingImage(false);
+                                            setImageError(true);
+                                        }}
                                     />
+                                    {imageError && <Text>Error al cargar la imagen</Text>}
                                 </View>
                                 <View style={styles.buttonfoto}>
                                     <Text style={styles.buttonText}>Fotografía</Text>

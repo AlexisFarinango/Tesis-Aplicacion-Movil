@@ -162,7 +162,7 @@ export default function RegistrarAsistencias() {
                 });
             }
         } catch (error) {
-            if (error.response && error.response.status === 404) {
+            if (error.response && error.response.status === 400) {
                 Toast.show({
                     type: "error",
                     text1: "No se encontraron cursos",
@@ -170,7 +170,7 @@ export default function RegistrarAsistencias() {
             } else {
                 Toast.show({
                     type: "error",
-                    text1: "Error",
+                    text1: `Error`,
                 });
             }
             console.log("Error al obtener los cursos:", error);
