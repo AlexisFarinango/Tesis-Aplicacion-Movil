@@ -115,7 +115,7 @@ export default function Materias() {
                     {cursos.map((curso, index) => (
                         <View key={index} style={styles.cursoCard}>
                             <Text style={styles.cursoNombre}>{curso.materia}</Text>
-                            <Text style={styles.cursoInfo}>Docente: {curso.docente.nombre} {curso.docente.apellido}</Text>
+                            <Text style={styles.cursoInfo}>Docente: {curso?.docente.nombre} {curso.docente.apellido}</Text>
                             <Text style={styles.cursoInfo}>Paralelo: {curso.paralelo}</Text>
                         </View>
                     ))}
