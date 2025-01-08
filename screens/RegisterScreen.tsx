@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { Modal, TouchableOpacity, Button, Image, PermissionsAndroid, ScrollView, StyleSheet, Text, TextInput, View, Dimensions } from "react-native";
+import { Modal, TouchableOpacity, Button, Image, PermissionsAndroid, ScrollView, StyleSheet, Text, TextInput, View, Dimensions, ActivityIndicator } from "react-native";
 import { launchCamera } from "react-native-image-picker";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import axios from "axios";
@@ -11,8 +11,8 @@ import { useNavigation } from "@react-navigation/native";
 
 // Esquema de validación con Yup
 const validacionForm = Yup.object().shape({
-    nombre: Yup.string().trim().matches(/^[A-Za-zñÑ\s]+$/, 'El nombre solo puede contener letras').required('Nombre Obligatorio').max(40, 'El nombre no puede tener más de 40 caracteres').min(3, "Debe existir un minimo de 3 caracteres"),
-    apellido: Yup.string().trim().matches(/^[A-Za-zñÑ\s]+$/, 'El apellido solo puede contener letras').required('Apellido Obligatorio').max(40, 'El apellido no puede tener más de 40 caracteres').min(3, "Debe existir un minimo de 3 caracteres"),
+    nombre: Yup.string().trim().matches(/^[A-Za-zñÑáéíóúÁÉÍÓÚ\s]+$/, 'El nombre solo puede contener letras').required('Nombre Obligatorio').max(40, 'El nombre no puede tener más de 40 caracteres').min(3, "Debe existir un minimo de 3 caracteres"),
+    apellido: Yup.string().trim().matches(/^[A-Za-zñÑáéíóúÁÉÍÓÚ\s]+$/, 'El apellido solo puede contener letras').required('Apellido Obligatorio').max(40, 'El apellido no puede tener más de 40 caracteres').min(3, "Debe existir un minimo de 3 caracteres"),
     cedula: Yup.string().trim().matches(/^[0-9]+$/, 'La cédula solo puede contener números').required('Cedula Obligatoria').max(10, 'La cédula no puede tener más de 10 caracteres').min(10, "Completa tu cédula"),
     email: Yup.string().trim().required('Correo Institucional Obligatorio').email("Debe ser un correo válido").matches(
         /@(epn\.edu\.ec)$/i,
@@ -21,7 +21,7 @@ const validacionForm = Yup.object().shape({
     password: Yup.string().trim().required('Contraseña Obligatoria').min(8, "Debe existir un minimo de 8 caracteres"),
     fecha_nacimiento: Yup.string().required("Fecha de Nacimiento Obligatoria"),
     direccion: Yup.string().trim().required('Dirección Obligatoria').max(30, 'La dirección no puede tener más de 30 caracteres').min(3, "Debe existir un minimo de 3 caracteres"),
-    ciudad: Yup.string().trim().matches(/^[A-Za-zñÑ\s]+$/, 'La ciudad solo puede contener letras').required('Ciudad Obligatoria').max(30, 'La ciudad no puede tener más de 30 caracteres').min(3, "Debe existir un minimo de 3 caracteres"),
+    ciudad: Yup.string().trim().matches(/^[A-Za-zñÑáéíóúÁÉÍÓÚ\s]+$/, 'La ciudad solo puede contener letras').required('Ciudad Obligatoria').max(30, 'La ciudad no puede tener más de 30 caracteres').min(3, "Debe existir un minimo de 3 caracteres"),
     telefono: Yup.string().trim().matches(/^[0-9]+$/, 'El teléfono solo puede contener números').required('Teléfono Obligatorio').max(10, 'El teléfono no puede tener más de 10 caracteres').min(10, "Completa tu número de teléfono"),
     fotografia: Yup.mixed().required('Debes capturar una imagen.'),
 });
@@ -38,6 +38,8 @@ export default function RegistroEstudiante() {
     const [imageError, setImageError] = useState('');
     const [isModalVisible, setIsModalVisible] = useState(true);
     const { width, height } = Dimensions.get('window');
+    const [loading, setLoading] = useState(false);
+    const [dots, setDots] = useState('');
     const scaleFactor = width < 400 ? 0.8 : 1;
 
 
@@ -91,6 +93,12 @@ export default function RegistroEstudiante() {
         } else {
             setImageError(''); // Limpiar el mensaje de error si hay imagen
         }
+        setLoading(true);
+        setDots(''); // Reiniciar los puntos
+        const interval = setInterval(() => {
+            setDots(prev => prev.length < 3 ? prev + '.' : ''); // Aumentar puntos hasta 3
+        }, 300);
+
         const formData = new FormData();
         formData.append('nombre', values.nombre);
         formData.append('apellido', values.apellido);
@@ -154,6 +162,10 @@ export default function RegistroEstudiante() {
                 }
                 console.error("Detalles completos del error:", error.toJSON());
             }
+        } finally {
+            clearInterval(interval); // Limpiar el intervalo
+            setLoading(false); // Desactivar el indicador de carga
+            setDots(''); // Reiniciar los puntos
         };
     }
 
@@ -250,7 +262,7 @@ export default function RegistroEstudiante() {
                         }}
                         validationSchema={validacionForm}
                         onSubmit={handleSubmit}>
-                        {({ handleChange, handleBlur, handleSubmit, setFieldValue, values, errors, touched }) => (
+                        {({ handleChange, handleBlur, handleSubmit, setFieldValue, values, errors, touched, isValid, isSubmitting }) => (
                             <>
                                 <Text style={styles.labeldos}>Nombres:</Text>
                                 <TextInput
@@ -427,8 +439,12 @@ export default function RegistroEstudiante() {
                                 )}
 
                                 <TouchableOpacity
-                                    style={styles.button}
+                                    style={[
+                                        styles.button,
+                                        { backgroundColor: isValid ? '#4CAF50' : '#CCC', opacity: isValid && !isSubmitting ? 1 : 0.5 },
+                                    ]}
                                     onPress={handleSubmit}
+                                    disabled={!isValid || isSubmitting}
                                 >
                                     <Text style={[styles.buttonText, { fontSize: 20 * scaleFactor }]}>Enviar</Text>
                                 </TouchableOpacity>
@@ -437,6 +453,21 @@ export default function RegistroEstudiante() {
                     </Formik>
                 </ScrollView>
             </View>
+            {loading && (
+                <View style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: 'rgba(0, 0, 0, 0.7)', // Fondo más oscuro y semi-transparente
+                    zIndex: 1000 // Asegura que esté en la capa superior
+                }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#fff' }}>Cargando Datos{dots}</Text>
+                </View>
+            )}
             <Toast />
         </View>
     );
