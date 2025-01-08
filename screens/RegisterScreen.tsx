@@ -203,18 +203,18 @@ export default function RegistroEstudiante() {
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                         <View style={{ width: '90%', backgroundColor: 'white', borderRadius: 10, padding: 20 }}>
                             <Text style={[styles.modalTitle, { fontSize: 24 * scaleFactor, color: 'black' }]}>
-                                Para comenzar con su registro, por favor asegúrese de lo siguiente al tomarse su fotografía
+                                Asegúrese de cumplir con lo siguiente al tomarse su fotografía para el registro.
                             </Text>
                             <View style={{ alignItems: 'center', marginVertical: 10 }}>
                                 <Image source={require('../icons/camara.png')} style={[styles.modalImage, { width: 120 * scaleFactor, height: 120 * scaleFactor }]} />
                             </View>
-                            <Text style={[styles.modalText, { fontSize: 18 * scaleFactor, color: 'black' }]}>🔹 Su rostro debe observarse por completo y no debe tener accesorios</Text>
-                            <Text style={[styles.modalText, { fontSize: 18 * scaleFactor, color: 'black' }]}>🔹 Recuerda estar en un lugar iluminado</Text>
-                            <Text style={[styles.modalText, { fontSize: 18 * scaleFactor, color: 'black' }]}>🔹 Procura que la fotografía sea lo más clara posible</Text>
+                            <Text style={[styles.modalText, { fontSize: 18 * scaleFactor, color: 'black' }]}>🔹 Asegúrese de que su rostro esté completamente visible y no use accesorios que puedan obstruirlo.</Text>
+                            <Text style={[styles.modalText, { fontSize: 18 * scaleFactor, color: 'black' }]}>🔹 Tómese la fotografía en un lugar bien iluminado para garantizar que sea clara y de buena calidad.</Text>
+                            <Text style={[styles.modalText, { fontSize: 18 * scaleFactor, color: 'black' }]}>🔹 Mantenga una distancia de 30 a 40 cm entre su rostro y la cámara al tomarse la fotografía.</Text>
                             <Text style={[styles.modalText, { fontSize: 18 * scaleFactor, color: 'black' }]}>
-                                ⚠️Este proceso es único y debe realizarse solo si cumples las condiciones mencionadas, para que tu usuario funcione correctamente.⚠️
+                                ⚠️Este proceso es único y debe realizarse cumpliendo con las condiciones indicadas para que su registro funcione correctamente.⚠️
                             </Text>
-                            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 5 }}>
                                 <TouchableOpacity
                                     style={styles.modalButton}
                                     onPress={() => {
@@ -465,7 +465,7 @@ export default function RegistroEstudiante() {
                     backgroundColor: 'rgba(0, 0, 0, 0.7)', // Fondo más oscuro y semi-transparente
                     zIndex: 1000 // Asegura que esté en la capa superior
                 }}>
-                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#fff' }}>Cargando Datos{dots}</Text>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#fff' }}>Registrando información{dots}</Text>
                 </View>
             )}
             <Toast />
