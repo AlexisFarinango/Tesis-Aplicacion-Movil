@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   footer: {
-    marginTop: 30,
+    marginTop: 10,
     alignItems: 'center',
   },
   footerText: {
@@ -110,7 +110,8 @@ export default function Login() {
   const navigation = useNavigation();
   const [passwordVisible, setPasswordVisible] = useState(false);
   const { width } = Dimensions.get('window');
-  const scaleFactor = width < 400 ? 0.6 : 2.0; // Aumenta el factor de escala para pantallas más grandes
+  const isTablet = width >= 768;
+  const scaleFactor = width < 400 ? 0.8 : (isTablet ? 0.6 : 1.1); // Ajustar el factor de escala
 
   useFocusEffect(
     useCallback(() => {
@@ -251,11 +252,14 @@ export default function Login() {
     <View style={styles.container}>
       <Image
         source={require('../icons/logo.webp')}
-        style={[styles.profileImage, { width: 140 * scaleFactor, height: 140 * scaleFactor }]}
+        style={[styles.profileImage, { 
+          width: 140 * (isTablet ? 0.6 : scaleFactor), 
+          height: 140 * (isTablet ? 0.6 : scaleFactor) 
+        }]}
       />
-      <Text style={[styles.title, { fontSize: 36 * scaleFactor }]}>Iniciar Sesión</Text>
+      <Text style={[styles.title, { fontSize: 26 * scaleFactor }]}>Iniciar Sesión</Text>
       <TextInput 
-        style={[styles.input, { fontSize: 24 * scaleFactor }]} 
+        style={styles.input} 
         placeholder="Correo Institucional"
         placeholderTextColor={"#888"}
         keyboardType="email-address"
@@ -263,7 +267,7 @@ export default function Login() {
         onChangeText={(text) => setEmail(text)}
       />
       <TextInput
-        style={[styles.input, { fontSize: 24 * scaleFactor }]} 
+        style={styles.input} 
         placeholder="Contraseña"
         placeholderTextColor={"#888"}
         secureTextEntry={!passwordVisible}
@@ -271,7 +275,7 @@ export default function Login() {
         onChangeText={(text) => setPassword(text)}
       />
       <View style={styles.checkboxContainer}>
-        <Text style={[styles.helperText, { fontSize: 20 * scaleFactor }]}>
+        <Text style={[styles.helperText, { fontSize: 18 * scaleFactor }]}>
           {passwordVisible ? "Contraseña visible" : "Contraseña oculta"}
         </Text>
         <TouchableOpacity
@@ -284,7 +288,7 @@ export default function Login() {
         style={styles.button}
         onPress={handleLogin}
       >
-        <Text style={[styles.buttonText, { fontSize: 24 * scaleFactor }]}>Ingresar</Text>
+        <Text style={[styles.buttonText, { fontSize: 22 * scaleFactor }]}>Ingresar</Text>
       </TouchableOpacity>
       <View style={styles.footer}>
         <TouchableOpacity onPress={() => navigation.navigate('Recuperar Contraseña')}>
