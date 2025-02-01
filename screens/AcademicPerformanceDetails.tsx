@@ -175,6 +175,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         marginBottom: 20,
         textAlign: "center",
+        color: "#666666",
     },
     link: {
         color: '#4A90E2',
@@ -298,6 +299,7 @@ const styles = StyleSheet.create({
     tableCell: {
         textAlign: 'center',
         fontSize: 15,
+        color: "#666666",
     },
     tableCellButton: {
         padding: 8,

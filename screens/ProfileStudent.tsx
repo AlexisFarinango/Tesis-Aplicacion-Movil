@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Text, View, StyleSheet, Image, TouchableOpacity, TextInput, PermissionsAndroid } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
@@ -12,45 +12,81 @@ import axios from "axios";
 import { API_URL_BACKEND } from '@env';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { KeyboardAvoidingView, Platform } from 'react-native';
+import FastImage from 'react-native-fast-image';
 
 // Función para formatear fecha
 const formatearfecha = (fechaISO) => {
+    console.log("fecha nacimiento", fechaISO);
+
+    // Crear la fecha a partir de la cadena ISO
     const fecha = new Date(fechaISO);
-    return fecha.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+    // Ajustar la fecha para evitar el desfase
+    const fechaLocal = new Date(fecha.getTime() + fecha.getTimezoneOffset() * 60000);
+
+    console.log("fecha nacimiento ajustada", fechaLocal);
+
+    // Formatear la fecha
+    const fechaFormateada = fechaLocal.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    console.log("fecha nacimiento formateada", fechaFormateada);
+
+    return fechaFormateada;
 };
 
 // Esquema de validación con Yup
 const validationSchema = Yup.object().shape({
-    nombre: Yup.string().required('El nombre es requerido'),
-    apellido: Yup.string().required('El apellido es requerido'),
-    direccion: Yup.string().required('La dirección es requerida'),
-    ciudad: Yup.string().required('La ciudad es requerida'),
-    telefono: Yup.string().required('El teléfono es requerido'),
+    nombre: Yup.string().trim().matches(/^[A-Za-zñÑáéíóúÁÉÍÓÚ\s]+$/, 'El nombre solo puede contener letras').required('Nombre Obligatorio').max(40, 'El nombre no puede tener más de 40 caracteres').min(3, "Debe existir un minimo de 3 caracteres"),
+    apellido: Yup.string().trim().matches(/^[A-Za-zñÑáéíóúÁÉÍÓÚ\s]+$/, 'El apellido solo puede contener letras').required('Apellido Obligatorio').max(40, 'El apellido no puede tener más de 40 caracteres').min(3, "Debe existir un minimo de 3 caracteres"),
+    direccion: Yup.string().trim().required('Dirección Obligatoria').max(30, 'La dirección no puede tener más de 30 caracteres').min(3, "Debe existir un minimo de 3 caracteres"),
+    ciudad: Yup.string().trim().matches(/^[A-Za-zñÑáéíóúÁÉÍÓÚ\s]+$/, 'La ciudad solo puede contener letras').required('Ciudad Obligatoria').max(30, 'La ciudad no puede tener más de 30 caracteres').min(3, "Debe existir un minimo de 3 caracteres"),
+    telefono: Yup.string().trim().matches(/^[0-9]+$/, 'El teléfono solo puede contener números').required('Teléfono Obligatorio').max(10, 'El teléfono no puede tener más de 10 caracteres').min(10, "Completa tu número de teléfono"),
 });
 
 export default function PerfilEstudiante() {
     const navigation = useNavigation();
     const { userData, datosusuario } = useContext(AuthContext);
-    console.log("datos del perfil",userData);
-    
+    console.log("datos del perfil", userData);
+
+    const [loadingImage, setLoadingImage] = useState(true);
+    const [imageError, setImageError] = useState(false);
 
     const handleUpdate = async (values) => {
         try {
             const token = await AsyncStorage.getItem('userToken');
-            console.log("valores",values);
-            
-            console.log("Este es el formulario:", JSON.stringify(values, null, 2));
-            
-            await axios.put(`${API_URL_BACKEND}/estudiante/modificar-perfil/${userData._id}`, values, {
+            console.log("valores", values);
+
+            // Crear un FormData para enviar la fotografía correctamente
+            const formData = new FormData();
+            formData.append('nombre', values.nombre);
+            formData.append('apellido', values.apellido);
+            formData.append('direccion', values.direccion);
+            formData.append('ciudad', values.ciudad);
+            formData.append('telefono', values.telefono);
+
+            // Verificar si hay una nueva fotografía y agregarla al FormData
+            // if (values.fotografia) {
+            //     formData.append('fotografia', {
+            //         uri: values.fotografia,
+            //         type: 'image/jpeg', // Cambia esto si es necesario
+            //         name: values.fotografia.split('/').pop() || `photo_${Date.now()}.jpg`,
+            //     });
+            // }
+
+            console.log("Este es el formulario:", JSON.stringify(formData, null, 2));
+
+            await axios.put(`${API_URL_BACKEND}/estudiante/modificar-perfil/${userData._id}`, formData, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',
                 }
             });
+            console.log("formulario actualizar: ", JSON.stringify(values, null, 2));
 
             Toast.show({
                 type: "success",
                 text1: "Actualización Realizada con Éxito",
+                visibilityTime: 3000,
+                onShow: () => console.log('Toast mostrado'),
             });
             await datosusuario();
 
@@ -66,34 +102,33 @@ export default function PerfilEstudiante() {
         }
     };
 
-    const requestCameraPermission = async (setFieldValue) => {
-        try {
-            const granted = await PermissionsAndroid.request(
-                PermissionsAndroid.PERMISSIONS.CAMERA,
-                {
-                    title: 'Permiso de Cámara',
-                    message: 'La aplicación necesita acceso a la cámara.',
-                    buttonNeutral: 'Preguntar luego',
-                    buttonNegative: 'Cancelar',
-                    buttonPositive: 'Aceptar',
-                },
-            );
+    // const requestCameraPermission = async (setFieldValue) => {
+    //     try {
+    //         const granted = await PermissionsAndroid.request(
+    //             PermissionsAndroid.PERMISSIONS.CAMERA,
+    //             {
+    //                 title: 'Permiso de Cámara',
+    //                 message: 'La aplicación necesita acceso a la cámara.',
+    //                 buttonNeutral: 'Preguntar luego',
+    //                 buttonNegative: 'Cancelar',
+    //                 buttonPositive: 'Aceptar',
+    //             },
+    //         );
 
-            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                launchCamera({ mediaType: 'photo' }, (response) => {
-                    if (response.assets) {
-                        setFieldValue('fotografia', response.assets[0].uri);
-                        console.log("foto tomada:", response.assets[0].uri);
-                        
-                    }
-                });
-            } else {
-                console.log('Permiso de cámara denegado');
-            }
-        } catch (err) {
-            console.warn(err);
-        }
-    };
+    //         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+    //             launchCamera({ mediaType: 'photo' }, (response) => {
+    //                 if (response.assets) {
+    //                     setFieldValue('fotografia', response.assets[0].uri);
+    //                     console.log("foto tomada:", response.assets[0].uri);
+    //                 }
+    //             });
+    //         } else {
+    //             console.log('Permiso de cámara denegado');
+    //         }
+    //     } catch (err) {
+    //         console.warn(err);
+    //     }
+    // };
 
     const styles = StyleSheet.create({
         container: {
@@ -136,6 +171,7 @@ export default function PerfilEstudiante() {
             paddingHorizontal: 15,
             marginBottom: 15,
             backgroundColor: "#fff",
+            color: "#666666",
         },
         readonlyInput: {
             backgroundColor: "#f5f5f5",
@@ -166,6 +202,7 @@ export default function PerfilEstudiante() {
             paddingHorizontal: 0,
             marginBottom: 10,
             backgroundColor: "#fff",
+            color: "#666666",
         },
         barNavicon: {
             width: 30,
@@ -193,6 +230,7 @@ export default function PerfilEstudiante() {
             fontSize: 16,
             textAlign: 'center',
             marginBottom: 10,
+            color: "#666666",
         },
     });
 
@@ -203,11 +241,10 @@ export default function PerfilEstudiante() {
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
             >
                 <View style={styles.container}>
-                    <Toast/>
                     <Text style={styles.title}>Perfil de Usuario</Text>
                     <Text style={styles.description}>
-                    Este módulo te permite ver y actualizar tu perfil
-                </Text>
+                        Este módulo te permite ver y actualizar tu perfil
+                    </Text>
                     <Formik
                         initialValues={{
                             nombre: userData.nombre || '',
@@ -215,24 +252,32 @@ export default function PerfilEstudiante() {
                             direccion: userData.direccion || '',
                             ciudad: userData.ciudad || '',
                             telefono: userData.telefono || '',
-                            fotografia: userData.fotografia || '',
+                            // fotografia: userData.fotografia || '',
                         }}
                         validationSchema={validationSchema}
                         onSubmit={handleUpdate}
                     >
-                        {({ handleChange, handleSubmit, values, setFieldValue, errors, touched }) => (
+                        {({ handleChange, handleBlur, handleSubmit, values, setFieldValue, errors, touched }) => (
                             <>
                                 <View style={styles.imageContainer}>
-                                    <Image
+                                    {loadingImage && !imageError && <Text>Cargando Fotografía...</Text>}
+                                    <FastImage
                                         source={{
-                                            uri: values.fotografia || "https://img.freepik.com/vector-premium/icono-perfil-usuario-estilo-plano-ilustracion-vector-avatar-miembro-sobre-fondo-aislado-concepto-negocio-signo-permiso-humano_157943-15752.jpg",
+                                            uri: userData.fotografia,
+                                            priority: FastImage.priority.normal,
                                         }}
                                         style={styles.profileImage}
+                                        onLoadEnd={() => setLoadingImage(false)}
+                                        onError={() => {
+                                            setLoadingImage(false);
+                                            setImageError(true);
+                                        }}
                                     />
+                                    {imageError && <Text>Error al cargar la imagen</Text>}
                                 </View>
-                                <TouchableOpacity style={styles.buttonfoto} onPress={() => requestCameraPermission(setFieldValue)}>
-                                    <Text style={styles.buttonText}>Actualizar Foto</Text>
-                                </TouchableOpacity>
+                                <View style={styles.buttonfoto}>
+                                    <Text style={styles.buttonText}>Fotografía</Text>
+                                </View>
                                 <ScrollView>
                                     <View style={styles.profileSection}>
                                         <Text style={styles.label}>Nombres:</Text>
@@ -240,6 +285,7 @@ export default function PerfilEstudiante() {
                                             style={styles.input}
                                             value={values.nombre}
                                             onChangeText={handleChange('nombre')}
+                                            onBlur={handleBlur('nombre')}
                                             placeholder="Nombres"
                                         />
                                         {errors.nombre && touched.nombre && <Text style={{ color: 'red' }}>{errors.nombre}</Text>}
@@ -250,6 +296,7 @@ export default function PerfilEstudiante() {
                                             style={styles.input}
                                             value={values.apellido}
                                             onChangeText={handleChange('apellido')}
+                                            onBlur={handleBlur('apellido')}
                                             placeholder="Apellidos"
                                         />
                                         {errors.apellido && touched.apellido && <Text style={{ color: 'red' }}>{errors.apellido}</Text>}
@@ -274,6 +321,7 @@ export default function PerfilEstudiante() {
                                             style={styles.input}
                                             value={values.direccion}
                                             onChangeText={handleChange('direccion')}
+                                            onBlur={handleBlur('direccion')}
                                             placeholder="Dirección"
                                         />
                                         {errors.direccion && touched.direccion && <Text style={{ color: 'red' }}>{errors.direccion}</Text>}
@@ -284,6 +332,7 @@ export default function PerfilEstudiante() {
                                             style={styles.input}
                                             value={values.ciudad}
                                             onChangeText={handleChange('ciudad')}
+                                            onBlur={handleBlur('ciudad')}
                                             placeholder="Ciudad"
                                         />
                                         {errors.ciudad && touched.ciudad && <Text style={{ color: 'red' }}>{errors.ciudad}</Text>}
@@ -294,7 +343,9 @@ export default function PerfilEstudiante() {
                                             style={styles.input}
                                             value={values.telefono}
                                             onChangeText={handleChange('telefono')}
+                                            onBlur={handleBlur('telefono')}
                                             placeholder="Teléfono"
+                                            keyboardType="numeric"
                                         />
                                         {errors.telefono && touched.telefono && <Text style={{ color: 'red' }}>{errors.telefono}</Text>}
                                     </View>
@@ -305,6 +356,7 @@ export default function PerfilEstudiante() {
                             </>
                         )}
                     </Formik>
+                    <Toast />
                 </View>
             </KeyboardAvoidingView>
             <View style={styles.bottomNav}>
@@ -324,7 +376,7 @@ export default function PerfilEstudiante() {
                     <Image source={require('../icons/actuaciones.png')} style={styles.barNavicon} />
                     <Text style={styles.navText}>Actuaciones</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Iniciar Sesion')}>
+                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Iniciar Sesión')}>
                     <Image source={require('../icons/cerrarsesion.png')} style={styles.barNavicon} />
                     <Text style={styles.navText}>Cerrar Sesión</Text>
                 </TouchableOpacity>

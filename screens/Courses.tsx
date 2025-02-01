@@ -73,7 +73,7 @@ export default function Materias() {
         } catch (error) {
             Toast.show({
                 type: "error",
-                text1: "Hubo un problema revisa el codigo",
+                text1: "Revisa el código ingresado o contáctate con el docente",
             });
             console.log("Error al registrar en el curso:", error);
         }
@@ -84,7 +84,7 @@ export default function Materias() {
             <View style={styles.container2}>
                 <Text style={styles.title}>Cursos Asignados</Text>
                 <Text style={styles.description}>
-                    Este módulo te permite mediante código registrarte a un curso
+                    Este módulo te permite mediante un código proporcionado por el docente inscribirte a un curso
                 </Text>
                 <Toast />
                 <View style={styles.cursoinput}>
@@ -104,11 +104,18 @@ export default function Materias() {
                     </View>
                 </View>
 
+                {/* Validación de cursos */}
+                {cursos.length === 0 ? (
+                    <Text style={styles.noCoursesMessage}>No existen cursos registrados, inscríbete en un curso.</Text>
+                ) : (
+                    <Text style={styles.registeredCoursesMessage}>Cursos en los que te encuentras Registrado</Text>
+                )}
+
                 <ScrollView style={styles.cursosContainer}>
                     {cursos.map((curso, index) => (
                         <View key={index} style={styles.cursoCard}>
                             <Text style={styles.cursoNombre}>{curso.materia}</Text>
-                            <Text style={styles.cursoInfo}>Docente: {curso.docente.nombre} {curso.docente.apellido}</Text>
+                            <Text style={styles.cursoInfo}>Docente: {curso?.docente.nombre} {curso.docente.apellido}</Text>
                             <Text style={styles.cursoInfo}>Paralelo: {curso.paralelo}</Text>
                         </View>
                     ))}
@@ -131,7 +138,7 @@ export default function Materias() {
                     <Image source={require('../icons/actuaciones.png')} style={styles.barNavicon} />
                     <Text style={styles.navText}>Actuaciones</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Iniciar Sesion')}>
+                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Iniciar Sesión')}>
                     <Image source={require('../icons/cerrarsesion.png')} style={styles.barNavicon} />
                     <Text style={styles.navText}>Cerrar Sesión</Text>
                 </TouchableOpacity>
@@ -232,6 +239,7 @@ const styles = StyleSheet.create({
         borderColor: '#DDD',
         fontSize: 16,
         fontWeight: 'normal',
+        color: "#666666",
     },
     addButton2: {
         backgroundColor: '#007BFF',
@@ -250,5 +258,20 @@ const styles = StyleSheet.create({
         fontSize: 16,
         textAlign: 'center',
         marginBottom: 5,
+        color: "#666666",
+    },
+    noCoursesMessage: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: 'gray',
+        textAlign: 'center',
+        marginVertical: 20,
+    },
+    registeredCoursesMessage: {
+        fontSize: 18,
+        fontWeight: "600",
+        color: "#003366",
+        textAlign: 'center',
+        marginBottom: 10,
     },
 });

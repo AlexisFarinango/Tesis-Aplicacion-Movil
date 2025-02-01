@@ -119,7 +119,13 @@ export default function DetalleActuaciones() {
         Voice.onSpeechStart = onSpeechStart;
         Voice.onSpeechEnd = stopListening;
         Voice.onSpeechResults = onSpeechResults;
-        Voice.onSpeechError = error => console.log('onSpeechError:', error);
+        Voice.onSpeechError = error => {
+            console.log('onSpeechError:', error); Toast.show({
+                type: 'error',
+                text1: 'El Micrófono se detuvo o no grabó nada',
+                text2: 'Tu micrófono está siendo utilizado o presenta problemas.',
+            })
+        };
 
         return () => {
             Voice.destroy().then(Voice.removeAllListeners);
@@ -197,7 +203,11 @@ export default function DetalleActuaciones() {
 
     const abrirModal = (estudiante) => {
         if (estudiante.descripciones.length >= 3) {
-            alert("Este estudiante ya tiene 3 descripciones.");
+            // alert("Este estudiante ya tiene 3 descripciones.");
+            Toast.show({
+                type: "error",
+                text1: "Este estudiante ya tiene 3 descripciones."
+            })
             return;
         }
         setCurrentEstudiante(estudiante);
@@ -277,17 +287,18 @@ export default function DetalleActuaciones() {
             console.log(secondresponse.data);
             Toast.show({
                 type: "success",
-                text1: secondresponse.data.msg
+                text1: "Actuaciones guardadas con éxito",
+                visibilityTime: 3000,
             })
             setTimeout(() => {
-                Toast.hide(); // Esto cerrará el Toast después de 3 segundos
+                // Toast.hide(); // Esto cerrará el Toast después de 3 segundos
+                navigation.goBack();
             }, 3000);
-            navigation.goBack();
         } catch (error) {
             console.log("Error al realizar la actualización en base", error);
             Toast.show({
                 type: "success",
-                text1: "Error al realizar la actualización en base"
+                text1: "Error al realizar el registro de Actuaciones"
             })
             setTimeout(() => {
                 Toast.hide(); // Esto cerrará el Toast después de 3 segundos
@@ -368,7 +379,6 @@ export default function DetalleActuaciones() {
 
     return (
         <View style={styles.container}>
-            <Toast />
             <Text style={styles.title}>Detalle Actuaciones</Text>
             <Text style={styles.fecha}>{obtenerFechaActual()}</Text>
             {actuaciones.length === 0 ? (
@@ -428,22 +438,24 @@ export default function DetalleActuaciones() {
                                 <TextInput
                                     value={descripcion}
                                     onChangeText={setDescripcion}
-                                    placeholder='Descripción de maximo 20 caracteres'
+                                    placeholder='Descripción de máximo 20 caracteres.'
                                     multiline={true}
                                     style={styles.textInput}
                                     maxLength={30}
                                 />
                             </View>
-                            <TouchableOpacity style={styles.micButton} onPress={handleMicrophonePress}>
+                            <TouchableOpacity style={[styles.micButton, escuchando && styles.recordingButton]} onPress={handleMicrophonePress}>
                                 <Image source={require('../icons/microfono.png')} style={styles.icon} />
                             </TouchableOpacity>
                         </View>
-                        <TouchableOpacity style={styles.addButton} onPress={guardarDescripcion}>
-                            <Text style={styles.addButtonText}>Añadir</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.retocederfondo} onPress={cerrarModal}>
-                            <Text style={styles.addButtonText}>Cancelar</Text>
-                        </TouchableOpacity>
+                        <View style={styles.buttonContainer}>
+                            <TouchableOpacity style={styles.addButton} onPress={guardarDescripcion}>
+                                <Text style={styles.addButtonText}>Añadir</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.retocederfondo} onPress={cerrarModal}>
+                                <Text style={styles.addButtonText}>Cancelar</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
             </Modal>
@@ -456,15 +468,15 @@ export default function DetalleActuaciones() {
             >
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
-                        <Text>Permite aumentar las actuaciones de cada estudiante</Text>
+                        <Text style={styles.textodos}>Añade actuaciones de cada estudiante</Text>
                         <View style={styles.iconContainer}>
                             <Image source={require('../icons/aumentar.png')} style={styles.icondos} />
                         </View>
-                        <Text>Permite disminuir las actuaciones de cada estudiante</Text>
+                        <Text style={styles.textodos}>Disminuye actuaciones de cada estudiante</Text>
                         <View style={styles.iconContainer}>
                             <Image source={require('../icons/disminuir.png')} style={styles.icondos} />
                         </View>
-                        <Text>Permite registrar 3 descripciones por medio de voz o texto de cada estudiante durante la clase</Text>
+                        <Text style={styles.textodos}>Permite registrar 3 descripciones por medio de voz o texto de cada estudiante durante la clase</Text>
                         <View style={styles.iconContainer}>
                             <Image source={require('../icons/microfono.png')} style={styles.icondos} />
                         </View>
@@ -477,6 +489,7 @@ export default function DetalleActuaciones() {
                     </View>
                 </View>
             </Modal>
+            <Toast />
         </View>
     );
 }
@@ -492,6 +505,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         marginBottom: 5,
+        color: "#666666",
     },
     fecha: {
         fontSize: 16,
@@ -604,6 +618,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         marginBottom: 15,
         fontWeight: 'bold',
+        color: "#666666",
     },
     textBoxContainer: {
         width: '100%',
@@ -613,7 +628,6 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 15,
     },
     textBox: {
         width: '90%',
@@ -625,6 +639,7 @@ const styles = StyleSheet.create({
     textInput: {
         flex: 1,
         fontSize: 16,
+        color: "#666666",
     },
     micButton: {
         position: 'absolute',
@@ -635,12 +650,12 @@ const styles = StyleSheet.create({
         borderRadius: 30,
     },
     addButton: {
-        marginTop: 20,
-        backgroundColor: '#4A90E2',
-        padding: 15,
-        borderRadius: 10,
-        width: '100%',
-        alignItems: 'center',
+        flex: 1, // Ambos botones ocuparán el mismo espacio
+        marginHorizontal: 5, // Espacio entre los botones
+        backgroundColor: '#007BFF', // Color de fondo (ajusta según sea necesario)
+        paddingVertical: 15, // Espaciado vertical
+        borderRadius: 10, // Bordes redondeados
+        alignItems: 'center', // Centra el texto
     },
     addButtonText: {
         color: '#fff',
@@ -648,11 +663,11 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     retocederfondo: {
-        marginTop: 20,
+        flex: 1, // Ambos botones ocuparán el mismo espacio
+        marginHorizontal: 5, // Espacio entre los botones
         backgroundColor: '#e52510',
-        padding: 15,
+        paddingVertical: 15, // Espaciado vertic
         borderRadius: 10,
-        width: '50%',
         alignItems: 'center',
     },
     noDataText: {
@@ -713,5 +728,16 @@ const styles = StyleSheet.create({
         width: 30,
         height: 30,
         marginRight: 10,
+    },
+    buttonContainer: {
+        flexDirection: 'row', // Alinea los botones en fila
+        justifyContent: 'space-between', // Espacio entre los botones
+        marginTop: 20, // Espacio superior opcional
+    },
+    textodos: {
+        color: "#666666",
+    },
+    recordingButton: {
+        backgroundColor: '#FDD835', // Color cuando está grabando
     },
 });

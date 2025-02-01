@@ -1,9 +1,11 @@
 import axios from 'axios';
-import React, { useState, useRef } from 'react';
-import { Text, View, TextInput, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import React, { useState, useRef, useCallback } from 'react';
+import { Text, View, TextInput, TouchableOpacity, StyleSheet, Modal, BackHandler } from 'react-native';
 import { API_URL_BACKEND } from '@env';
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import Toast from 'react-native-toast-message';
+import RNMinimizeApp from 'react-native-minimize';
+
 
 export default function TokenValidadoRegistro() {
     const [code, setCode] = useState(Array(10).fill(''));
@@ -12,6 +14,21 @@ export default function TokenValidadoRegistro() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const navigation = useNavigation();
     const inputs = useRef([]);
+    useFocusEffect(
+        useCallback(() => {
+            const handleBackPress = () => {
+                RNMinimizeApp.minimizeApp(); // Envía la aplicación al fondo
+                return true; // Previene el comportamiento predeterminado
+            };
+
+            BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+
+            // Limpia el listener cuando se pierde el enfoque
+            return () => {
+                BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
+            };
+        }, [])
+    );
 
     const handleChangeText = (text, index) => {
         let newCode = [...code];
@@ -44,13 +61,14 @@ export default function TokenValidadoRegistro() {
                     text1: `${response.data.msg}`
                 })
                 setTimeout(()=>{
-                        navigation.navigate('Iniciar Sesion')
+                        navigation.navigate('Iniciar Sesión')
                 },5000);
             } catch (error) {
                 console.log("Se obtuvo un error al validar el token", error);
                 Toast.show({
                     type: "error",
-                    text1: "Revisa el token"
+                    text1: "Código Inválido",
+                    text2: "Revisa el código ingresado"
                 });
             }
         }

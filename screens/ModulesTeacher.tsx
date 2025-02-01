@@ -1,18 +1,35 @@
-import { useNavigation } from '@react-navigation/native';
-import React, { useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from 'react-native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import React, { useContext,useCallback } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image, BackHandler } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { API_URL_BACKEND } from '@env'
 import { AuthContext } from '../context/AuthContext';
+import RNMinimizeApp from 'react-native-minimize';
 
 const data = [
-    { id: 1, title: 'Registrar Actuaciones', icon: require('../icons/asistencias.png'), screen:'Ver Actuaciones'},
+    { id: 1, title: 'Actuaciones', icon: require('../icons/asistencias.png'), screen:'Ver Actuaciones'},
 ];
 
 export default function ModulosDocentes() {
-    const {logout} = useContext(AuthContext);
+    const {logout,nameDocente} = useContext(AuthContext);
     const navigation = useNavigation();
+    useFocusEffect(
+        useCallback(() => {
+            const handleBackPress = () => {
+                RNMinimizeApp.minimizeApp(); // Envía la aplicación al fondo
+                return true; // Previene el comportamiento predeterminado
+            };
+
+            BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+
+            // Limpia el listener cuando se pierde el enfoque
+            return () => {
+                BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
+            };
+        }, [])
+    );
+
     const renderItem = ({ item }) => (
         <TouchableOpacity style={[styles.card, item.highlight && styles.highlight]} onPress={()=>navigation.navigate(item.screen)}>
             <Image source={item.icon} style={styles.icon} />
@@ -21,12 +38,12 @@ export default function ModulosDocentes() {
     );
     const handleLogout = async () => {
         await logout();  // Llamar la función logout del contexto
-        navigation.navigate("Iniciar Sesion");  // Navegar a la pantalla de inicio de sesión
+        navigation.navigate("Iniciar Sesión");  // Navegar a la pantalla de inicio de sesión
     };
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Bienvenido Docente</Text>
+            <Text style={styles.title}>Bienvenid@ {nameDocente}</Text>
             <FlatList
                 data={data}
                 renderItem={renderItem}
@@ -63,6 +80,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         marginVertical: 20,
+        color: "#666666",
     },
     grid: {
         paddingHorizontal: 10,
@@ -93,6 +111,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
         textAlign: 'center',
+        color: "#666666",
     },
     cardSubText: {
         fontSize: 14,

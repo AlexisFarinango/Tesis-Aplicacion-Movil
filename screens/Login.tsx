@@ -1,12 +1,13 @@
-import { useNavigation } from "@react-navigation/native";
-import React, { useContext, useState } from "react";
-import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image } from "react-native"
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import React, { useContext, useState, useCallback } from "react";
+import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image, BackHandler, Dimensions } from "react-native"
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL_BACKEND } from '@env'
 import { jwtDecode } from "jwt-decode";
 import { AuthContext } from "../context/AuthContext";
-
+import Toast from "react-native-toast-message";
+import RNMinimizeApp from 'react-native-minimize';
 
 
 const styles = StyleSheet.create({
@@ -49,12 +50,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   footer: {
-    marginTop: 30,
+    marginTop: 10,
     alignItems: 'center',
   },
   footerText: {
     fontSize: 14,
-    color: '#888',
+    color: "#666666",
   },
   footerLink: {
     fontSize: 14,
@@ -97,6 +98,7 @@ const styles = StyleSheet.create({
   },
   helperText: {
     marginLeft: 10,
+    color: "#666666",
   },
 });
 
@@ -104,17 +106,39 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   // const [user, setUser] = useState("")
-  const { login } = useContext(AuthContext);
+  const { login, setNamedocente } = useContext(AuthContext);
   const navigation = useNavigation();
   const [passwordVisible, setPasswordVisible] = useState(false);
-  
-  
-  
-  
-  
+  const { width } = Dimensions.get('window');
+  const isTablet = width >= 768;
+  const scaleFactor = width < 400 ? 0.8 : (isTablet ? 0.6 : 1.1); // Ajustar el factor de escala
+
+  useFocusEffect(
+    useCallback(() => {
+      const handleBackPress = () => {
+        RNMinimizeApp.minimizeApp(); // Envía la aplicación al fondo
+        return true; // Previene el comportamiento predeterminado
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+
+      // Limpia el listener cuando se pierde el enfoque
+      return () => {
+        BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
+      };
+    }, [])
+  );
+
+
   const handleLogin = async () => {
+    console.log("nuevo",API_URL_BACKEND);
+    
     if (!email || !password) {
-      alert('Por favor completa los campos');
+      Toast.show({
+        type: 'error',
+        text1: `Lo sentimos, todos los campos deben de estar llenos`,
+        text2: "Completa los campos"
+      })
       return;
     }
     const validacion = password.includes("EST")
@@ -124,28 +148,53 @@ export default function Login() {
           email: email,
           password: password,
         });
-        
+
         const { token } = response.data;
+        setNamedocente(response.data.nombre)
+
         await AsyncStorage.setItem('userToken', token);
         login(token);
         // const decodedToken = jwtDecode(token);
-        
+
         // Redirige al usuario según su rol
         const user = jwtDecode(token);
         console.log(user);
         // setUser(decoded);
-        
-        
+
         if (user.rol === 'docente') {
           navigation.navigate("Docente");
           setEmail("");
           setPassword("");
         }
-        
+
       } catch (errorDocente) {
+        const status = errorDocente.response.status;
+        if (status === 403) {
+          Toast.show({
+            type: 'error',
+            text1: `Cuenta no Verificada`,
+          })
+        } else if (status === 404) {
+          Toast.show({
+            type: 'error',
+            text1: `Docente no registrado`,
+            text2: "Verifica el correo ingresado",
+          })
+        } else if (status === 401) {
+          Toast.show({
+            type: 'error',
+            text1: `Correo o contraseña Incorrecto`,
+          })
+        } else {
+          Toast.show({
+            type: 'error',
+            text1: `Problemas con el Servidor`,
+            text2: `Revisa tu conexión a Internet`,
+          })
+        }
         // Si también falla el login de docente, mostramos un mensaje de error
-        alert("Usuario o contraseña incorrectos.");
-        console.log("Error de autenticación:", errorDocente);
+        // alert("Usuario o contraseña incorrectos.");
+        // console.log("Error de autenticación:", errorDocente);
       }
     } else {
       try {
@@ -170,20 +219,47 @@ export default function Login() {
         }
 
       } catch (errorEstudiante) {
-        console.log("Error estudiante: ", errorEstudiante);
+        const status = errorEstudiante.response.status;
+        if (status === 403) {
+          Toast.show({
+            type: 'error',
+            text1: `Cuenta no Verificada`,
+            text2: `Contactate con tu docente`,
+          })
+        } else if (status === 404) {
+          Toast.show({
+            type: 'error',
+            text1: `Estudiante no registrado`,
+            text2: "Verifica el correo ingresado",
+          })
+        } else if (status === 401) {
+          Toast.show({
+            type: 'error',
+            text1: `Correo o contraseña Incorrecto`,
+          })
+        } else {
+          Toast.show({
+            type: 'error',
+            text1: `Problemas con el Servidor`,
+            text2: `Revisa tu conexión a Internet`,
+          })
+        }
       }
     }
   };
-
 
   return (
     <View style={styles.container}>
       <Image
         source={require('../icons/logo.webp')}
-        style={styles.profileImage}
+        style={[styles.profileImage, { 
+          width: 140 * (isTablet ? 0.6 : scaleFactor), 
+          height: 140 * (isTablet ? 0.6 : scaleFactor) 
+        }]}
       />
-      <Text style={styles.title}>Iniciar Sesion</Text>
-      <TextInput style={styles.input}
+      <Text style={[styles.title, { fontSize: 26 * scaleFactor }]}>Iniciar Sesión</Text>
+      <TextInput 
+        style={styles.input} 
         placeholder="Correo Institucional"
         placeholderTextColor={"#888"}
         keyboardType="email-address"
@@ -191,7 +267,7 @@ export default function Login() {
         onChangeText={(text) => setEmail(text)}
       />
       <TextInput
-        style={styles.input}
+        style={styles.input} 
         placeholder="Contraseña"
         placeholderTextColor={"#888"}
         secureTextEntry={!passwordVisible}
@@ -199,11 +275,11 @@ export default function Login() {
         onChangeText={(text) => setPassword(text)}
       />
       <View style={styles.checkboxContainer}>
-        <Text style={styles.helperText}>
+        <Text style={[styles.helperText, { fontSize: 18 * scaleFactor }]}>
           {passwordVisible ? "Contraseña visible" : "Contraseña oculta"}
         </Text>
         <TouchableOpacity
-          onPress={() => setPasswordVisible(!passwordVisible)} // Alterna la visibilidad
+          onPress={() => setPasswordVisible(!passwordVisible)}
           style={styles.checkbox}>
           <View style={passwordVisible ? styles.checkboxChecked : styles.checkboxUnchecked} />
         </TouchableOpacity>
@@ -211,19 +287,21 @@ export default function Login() {
       <TouchableOpacity
         style={styles.button}
         onPress={handleLogin}
-      ><Text style={styles.buttonText}>Entrar</Text>
+      >
+        <Text style={[styles.buttonText, { fontSize: 22 * scaleFactor }]}>Ingresar</Text>
       </TouchableOpacity>
       <View style={styles.footer}>
         <TouchableOpacity onPress={() => navigation.navigate('Recuperar Contraseña')}>
-          <Text>¿Has olvidado la Contraseña?</Text>
+          <Text style={{ color: "#666666", fontSize: 14 }}>¿Has olvidado la Contraseña?</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.footer}>
-        <Text style={styles.footerText}>¿No tienes cuenta?</Text>
+        <Text style={[styles.footerText, { fontSize: 14 }]}>¿No tienes cuenta?</Text>
         <TouchableOpacity onPress={() => navigation.navigate('Registro')}>
-          <Text style={styles.footerLink}>Regístrate aquí</Text>
+          <Text style={[styles.footerLink, { fontSize: 14 }]}>Regístrate aquí</Text>
         </TouchableOpacity>
       </View>
+      <Toast />
     </View>
   );
 }

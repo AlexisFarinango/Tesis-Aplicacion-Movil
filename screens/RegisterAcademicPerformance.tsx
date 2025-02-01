@@ -20,6 +20,7 @@ export default function RegistrarAsistencias() {
             padding: 20,
             fontWeight: "bold",
             textAlign: "center",
+            color: "#666666",
         },
         tableContainer: {
             marginBottom: 20,
@@ -126,7 +127,7 @@ export default function RegistrarAsistencias() {
         description: {
             fontSize: 14,
             textAlign: 'center',
-            // marginBottom: 5,
+            color: "#666666",
         },
     });
     const [cursos, setCursos] = useState([]);
@@ -134,7 +135,7 @@ export default function RegistrarAsistencias() {
     const { logout } = useContext(AuthContext);
     const handleLogout = async () => {
         await logout();  // Llamar la función logout del contexto
-        navigation.navigate("Iniciar Sesion");  // Navegar a la pantalla de inicio de sesión
+        navigation.navigate("Iniciar Sesión");  // Navegar a la pantalla de inicio de sesión
     };
     const updateCursos = async () => {
         const token = await AsyncStorage.getItem('userToken');
@@ -161,7 +162,7 @@ export default function RegistrarAsistencias() {
                 });
             }
         } catch (error) {
-            if (error.response && error.response.status === 404) {
+            if (error.response && error.response.status === 400) {
                 Toast.show({
                     type: "error",
                     text1: "No se encontraron cursos",
@@ -169,7 +170,7 @@ export default function RegistrarAsistencias() {
             } else {
                 Toast.show({
                     type: "error",
-                    text1: "Error",
+                    text1: `Error`,
                 });
             }
             console.log("Error al obtener los cursos:", error);
@@ -251,12 +252,22 @@ export default function RegistrarAsistencias() {
         updateCursos();
         // verificarFechaRegistro();
     }, []);
+    
+    const obtenerFechaActual = () => {
+        const ahora = new Date();
+        const anio = ahora.getFullYear();
+        const mes = String(ahora.getMonth() + 1).padStart(2, '0'); // Meses van de 0 a 11
+        const dia = String(ahora.getDate()).padStart(2, '0');
+        return `${dia}/${mes}/${anio}`;
+    };
+    const fechaActual = obtenerFechaActual();
+    console.log("Fecha actual:", fechaActual);
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Actuaciones</Text>
             <Text style={styles.description}>
-                Este módulo te permite registrar actuaciones de los estudiantes presentes en la fecha actual
+                Este módulo te permite registrar actuaciones de los estudiantes presentes en la fecha {fechaActual}
             </Text>
             <Toast />
             <FlatList

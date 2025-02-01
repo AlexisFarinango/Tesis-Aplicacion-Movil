@@ -18,6 +18,7 @@ export default function Asistencias() {
             padding: 20,
             fontWeight: "bold",
             textAlign: "center",
+            color: "#666666",
         },
         tableContainer: {
             marginBottom: 20,
@@ -124,6 +125,7 @@ export default function Asistencias() {
         description: {
             fontSize: 16,
             textAlign: 'center',
+            color: "#666666",
         },
     });
 
@@ -152,12 +154,17 @@ export default function Asistencias() {
             console.log("Información actuaciones cursos:", response.data.informacionCursos);
 
         } catch (error) {
-            console.log("No se pudo cargar los cursos", error);
-            Toast.show({
-                type: "error",
-                text1: "No se encontraron cursos",
-                text2: "Registrate en un Curso"
-            });
+            if (error.response && error.response.status === 404) {
+                Toast.show({
+                    type: "error",
+                    text1: "No se encontraron cursos",
+                });
+            } else {
+                Toast.show({
+                    type: "error",
+                    text1: "Error",
+                });
+            }
 
         }
     }
@@ -180,7 +187,7 @@ export default function Asistencias() {
         <View style={styles.container}>
             <Text style={styles.title}>Actuaciones</Text>
             <Text style={styles.description}>
-                Este módulo te permite ver las actuaciones y descripciones en los cursos registrados
+                Este módulo te permite ver las actuaciones y descripciones en los cursos que te encuentras registrado
             </Text>
             <Toast />
             <FlatList
@@ -207,7 +214,7 @@ export default function Asistencias() {
                     <Image source={require('../icons/actuaciones.png')} style={styles.barNavicon} />
                     <Text style={styles.navText}>Actuaciones</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Iniciar Sesion')}>
+                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Iniciar Sesión')}>
                     <Image source={require('../icons/cerrarsesion.png')} style={styles.barNavicon} />
                     <Text style={styles.navText}>Cerrar Sesión</Text>
                 </TouchableOpacity>

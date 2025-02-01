@@ -1,10 +1,10 @@
-import { useNavigation } from '@react-navigation/native';
-import React, { useContext, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from 'react-native';
+import { useNavigation,useFocusEffect } from '@react-navigation/native';
+import React, { useContext, useCallback } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image, BackHandler } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-//importo Contexto
 import { AuthContext } from '../context/AuthContext';
+import RNMinimizeApp from 'react-native-minimize';
 
 
 const data = [
@@ -18,7 +18,21 @@ const data = [
 export default function ModulosEstudiantes() {
     const {userData, logout} = useContext(AuthContext);
     console.log("Esta es la Data en modulos: ",userData);
-    
+    useFocusEffect(
+        useCallback(() => {
+            const handleBackPress = () => {
+                RNMinimizeApp.minimizeApp(); // Envía la aplicación al fondo
+                return true; // Previene el comportamiento predeterminado
+            };
+
+            BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+
+            // Limpia el listener cuando se pierde el enfoque
+            return () => {
+                BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
+            };
+        }, [])
+    );
 
 
     const navigation = useNavigation();
@@ -33,12 +47,12 @@ export default function ModulosEstudiantes() {
     // Función para cerrar sesión
     const handleLogout = async () => {
         await logout();  // Llamar la función logout del contexto
-        navigation.navigate("Iniciar Sesion");  // Navegar a la pantalla de inicio de sesión
+        navigation.navigate("Iniciar Sesión");  // Navegar a la pantalla de inicio de sesión
     };
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Bienvenido {userData?.nombre}</Text>
+            <Text style={styles.title}>Bienvenid@ {userData?.nombre}</Text>
             <FlatList
                 data={data}
                 renderItem={renderItem}
@@ -83,6 +97,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         marginVertical: 20,
+        color: "#666666",
     },
     grid: {
         paddingHorizontal: 10,
@@ -112,6 +127,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
         textAlign: 'center',
+        color: "#666666",
     },
     cardSubText: {
         fontSize: 14,
