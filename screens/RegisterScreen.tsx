@@ -9,7 +9,7 @@ import { API_URL_BACKEND } from '@env'
 import Toast from "react-native-toast-message";
 import { useNavigation } from "@react-navigation/native";
 
-// Esquema de validación con Yup
+
 const validacionForm = Yup.object().shape({
     nombre: Yup.string().trim().matches(/^[A-Za-zñÑáéíóúÁÉÍÓÚ\s]+$/, 'El nombre solo puede contener letras').required('Nombre Obligatorio').max(40, 'El nombre no puede tener más de 40 caracteres').min(3, "Debe existir un minimo de 3 caracteres"),
     apellido: Yup.string().trim().matches(/^[A-Za-zñÑáéíóúÁÉÍÓÚ\s]+$/, 'El apellido solo puede contener letras').required('Apellido Obligatorio').max(40, 'El apellido no puede tener más de 40 caracteres').min(3, "Debe existir un minimo de 3 caracteres"),
@@ -43,7 +43,7 @@ export default function RegistroEstudiante() {
     const scaleFactor = width < 400 ? 0.8 : 1;
 
 
-    // Solicitar permiso de cámara y capturar foto
+
     const requestCameraPermission = async (setFieldValue) => {
         try {
             const granted = await PermissionsAndroid.request(
@@ -67,8 +67,8 @@ export default function RegistroEstudiante() {
                     } else {
                         console.log('Foto capturada:', response.assets[0]);
                         const image = response.assets[0];
-                        setSelectedImage(image.uri); // Muestra la imagen en la vista
-                        setFieldValue('fotografia', image); // Asigna la imagen al formulario
+                        setSelectedImage(image.uri); 
+                        setFieldValue('fotografia', image); 
                     }
                 });
             } else {
@@ -79,24 +79,24 @@ export default function RegistroEstudiante() {
         }
     };
 
-    // Manejar el envío del formulario
+
     const handleSubmit = async (values) => {
         console.log(values.fotografia.uri);
         if (!values.fotografia?.uri) {
             Toast.show({
                 type: "error",
                 text1: "No se ha capturado una fotografía"
-            }); // Establecer mensaje de error
+            }); 
             console.log("No se ha capturado una fotografía");
 
-            return; // Detener el envío si no hay imagen
+            return; 
         } else {
-            setImageError(''); // Limpiar el mensaje de error si hay imagen
+            setImageError('');
         }
         setLoading(true);
-        setDots(''); // Reiniciar los puntos
+        setDots(''); 
         const interval = setInterval(() => {
-            setDots(prev => prev.length < 3 ? prev + '.' : ''); // Aumentar puntos hasta 3
+            setDots(prev => prev.length < 3 ? prev + '.' : ''); 
         }, 300);
 
         const formData = new FormData();
@@ -105,7 +105,6 @@ export default function RegistroEstudiante() {
         formData.append('cedula', values.cedula);
         formData.append('email', values.email);
         formData.append('password', `EST${values.password}`);
-        // formData.append('fecha_nacimiento', values.fecha_nacimiento);
         const fecha = new Date(values.fecha_nacimiento);
         const formattedDate = `${fecha.getFullYear()}/${String(fecha.getMonth() + 1).padStart(2, '0')}/${String(fecha.getDate()).padStart(2, '0')}`;
         formData.append('fecha_nacimiento', formattedDate);
@@ -120,8 +119,7 @@ export default function RegistroEstudiante() {
 
         console.log("formulario: ", JSON.stringify(formData, null, 2));
 
-        // Aquí puedes realizar la petición al backend usando Axios o Fetch
-        // Ejemplo:
+
         console.log("ruta", `${API_URL_BACKEND}/estudiante/registro-estudiante`);
         try {
             const config = {
@@ -143,7 +141,6 @@ export default function RegistroEstudiante() {
                 console.error("Estado HTTP:", status);
                 console.error("Encabezados de respuesta:", error.response.headers);
 
-                // Manejo de códigos de estado específicos
                 if (status === 400) {
                     console.error("Solicitud incorrecta (400) ");
                     Toast.show({ type: 'error', text1: 'Existen campos vacios' });
@@ -158,36 +155,31 @@ export default function RegistroEstudiante() {
                     Toast.show({ type: 'error', text1: 'Error en el servidor' });
                 } else {
                     console.error(`Error con código ${status}`);
-                    // Puedes agregar más códigos de error según sea necesario
                 }
                 console.error("Detalles completos del error:", error.toJSON());
             }
         } finally {
-            clearInterval(interval); // Limpiar el intervalo
-            setLoading(false); // Desactivar el indicador de carga
-            setDots(''); // Reiniciar los puntos
+            clearInterval(interval);
+            setLoading(false); 
+            setDots(''); 
         };
     }
 
-    // Función para formatear la fecha
+
     const formatDate = (date) => {
         if (date instanceof Date && !isNaN(date)) {
-            // Verifica que sea una instancia válida de Date
             const d = new Date(date);
-            // Extrae los componentes de la fecha
             const year = d.getFullYear();
-            const month = String(d.getMonth() + 1).padStart(2, "0"); // Mes comienza en 0
+            const month = String(d.getMonth() + 1).padStart(2, "0");
             const day = String(d.getDate()).padStart(2, "0");
-            return `${year}/${month}/${day}`; // Construye el formato deseado
+            return `${year}/${month}/${day}`; 
         } else {
-            return ""; // Si no es una instancia válida de Date, retorna un string vacío
+            return "";
         }
     };
     const handleChangeDate = (event, selectedDate, setFieldValue) => {
         setShowDatePicker(false);
         if (selectedDate) {
-            // Actualiza el valor de la fecha en Formik
-            // setFieldValue("fecha_nacimiento", selectedDate.toISOString().split("T")[0]);
             setFieldValue("fecha_nacimiento", selectedDate);
         }
     };
@@ -218,7 +210,7 @@ export default function RegistroEstudiante() {
                                 <TouchableOpacity
                                     style={styles.modalButton}
                                     onPress={() => {
-                                        setIsModalVisible(false); // Cierra el modal
+                                        setIsModalVisible(false); 
                                     }}
                                 >
                                     <Text style={[styles.buttonText, { fontSize: 18 * scaleFactor, textAlign: 'center' }]}>Entendido</Text>
@@ -226,8 +218,8 @@ export default function RegistroEstudiante() {
                                 <TouchableOpacity
                                     style={styles.modalButtonregresar}
                                     onPress={() => {
-                                        setIsModalVisible(false); // Cierra el modal
-                                        navigation.goBack(); // Retrocede a la página anterior
+                                        setIsModalVisible(false); 
+                                        navigation.goBack(); 
                                     }}
                                 >
                                     <Text style={[styles.buttonText, { fontSize: 18 * scaleFactor, textAlign: 'center' }]}>Realizar registro en otro momento</Text>
@@ -337,12 +329,10 @@ export default function RegistroEstudiante() {
                                         placeholderTextColor={"#888"}
                                         secureTextEntry={!passwordVisible}
                                         onChangeText={text => {
-                                            // Verifica si el texto contiene espacios
                                             if (text.includes(' ')) {
-                                                // Si contiene espacios, no actualiza el estado
                                                 return;
                                             }
-                                            handleChange('password')(text); // Actualiza el estado si no hay espacios
+                                            handleChange('password')(text); 
                                         }}
                                         onBlur={handleBlur('password')}
                                         value={values.password}
@@ -354,7 +344,7 @@ export default function RegistroEstudiante() {
                                         {passwordVisible ? "Contraseña visible" : "Contraseña oculta"}
                                     </Text>
                                     <TouchableOpacity
-                                        onPress={() => setPasswordVisible(!passwordVisible)} // Alterna la visibilidad
+                                        onPress={() => setPasswordVisible(!passwordVisible)} 
                                         style={styles.checkbox}>
                                         <View style={passwordVisible ? styles.checkboxChecked : styles.checkboxUnchecked} />
                                     </TouchableOpacity>
@@ -368,7 +358,6 @@ export default function RegistroEstudiante() {
                                     <Text style={styles.buttonText}>Seleccionar Fecha</Text>
                                 </TouchableOpacity>
 
-                                {/* Aquí va el DateTimePicker si se está mostrando */}
                                 {showDatePicker && (
                                     <DateTimePicker
                                         value={values.fecha_nacimiento ? new Date(values.fecha_nacimiento) : new Date()}
@@ -433,7 +422,6 @@ export default function RegistroEstudiante() {
                                 >
                                     <Text style={styles.buttonText}>Tomar Fotografía del Rostro</Text>
                                 </TouchableOpacity>
-                                {/* Mostrar imagen capturada */}
                                 {selectedImage && (
                                     <Image source={{ uri: selectedImage }} style={styles.image} />
                                 )}
@@ -462,8 +450,8 @@ export default function RegistroEstudiante() {
                     bottom: 0,
                     justifyContent: 'center',
                     alignItems: 'center',
-                    backgroundColor: 'rgba(0, 0, 0, 0.7)', // Fondo más oscuro y semi-transparente
-                    zIndex: 1000 // Asegura que esté en la capa superior
+                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                    zIndex: 1000 
                 }}>
                     <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#fff' }}>Registrando información{dots}</Text>
                 </View>
@@ -483,7 +471,7 @@ const styles = StyleSheet.create({
     },
     container: {
         padding: 20,
-        flexGrow: 1, // Ensures that the container stretches to fill available space
+        flexGrow: 1, 
     },
     input: {
         borderWidth: 1,
@@ -505,21 +493,21 @@ const styles = StyleSheet.create({
     },
     passwordContainer: {
         marginVertical: 10,
-        flexDirection: 'row', // Organiza los elementos en una fila
-        alignItems: 'center', // Alinea verticalmente en el centro
-        borderWidth: 1, // Opcional: para mostrar un borde en el contenedor
-        borderColor: '#ccc', // Opcional: color del borde
-        borderRadius: 5, // Opcional: esquinas redondeadas
-        padding: 5, // Opcional: espacio interno
+        flexDirection: 'row',
+        alignItems: 'center', 
+        borderWidth: 1, 
+        borderColor: '#ccc', 
+        borderRadius: 5, 
+        padding: 5,
     },
     prefix: {
-        marginRight: 5, // Espacio entre "EST" y el input
-        fontWeight: 'bold', // Opcional: formato del texto "EST"
+        marginRight: 5, 
+        fontWeight: 'bold', 
         color: "#666666",
     },
     inputpassword: {
-        flex: 1, // Hace que el input ocupe el resto del espacio disponible
-        height: 40, // Altura del TextInput
+        flex: 1, 
+        height: 40, 
         backgroundColor: "#fff",
         color: "#666666",
     },
@@ -564,10 +552,10 @@ const styles = StyleSheet.create({
     button: {
         padding: 10,
         marginVertical: 10,
-        backgroundColor: '#4CAF50',  // Puedes cambiar el color de fondo aquí
+        backgroundColor: '#4CAF50', 
         borderRadius: 5,
-        borderWidth: 1,  // Esto es para agregar un borde
-        borderColor: '#ccc',  // Color del borde
+        borderWidth: 1,  
+        borderColor: '#ccc', 
         alignItems: 'center',
     },
     buttonText: {
@@ -576,14 +564,14 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     customButton: {
-        backgroundColor: '#007BFF', // Color de fondo
-        padding: 10, // Espaciado dentro del botón
-        borderRadius: 5, // Bordes redondeados
-        borderWidth: 1, // Ancho del borde
-        borderColor: '#0056b3', // Color del borde
-        alignItems: 'center', // Alinear el texto al centro
+        backgroundColor: '#007BFF',
+        padding: 10, 
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: '#0056b3', 
+        alignItems: 'center', 
         justifyContent: 'center',
-        marginVertical: 10, // Espaciado vertical
+        marginVertical: 10, 
     },
     labeldos: {
         fontSize: 18,
@@ -594,18 +582,17 @@ const styles = StyleSheet.create({
         color: 'red',
         fontSize: 12,
         marginVertical: 5,
-        textAlign: 'center', // Centra el mensaje
+        textAlign: 'center', 
     },
     modalContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.9)', // Fondo semi-transparente
+        backgroundColor: 'rgba(0, 0, 0, 0.9)',
     },
     modalImage: {
         width: '50%',
         height: '30%',
-        // marginBottom: 10,
     },
     modalText: {
         color: '#fff',
@@ -623,25 +610,23 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
     modalButton: {
-        // backgroundColor: '#007BFF', // Color de fondo del botón
         backgroundColor: '#007BFF',
         padding: 10,
         borderRadius: 5,
         borderWidth: 1,
-        borderColor: '#0056b3', // Color del borde
-        marginHorizontal: 10, // Espaciado entre los botones
-        flex: 1, // Hace que los botones ocupen el mismo espacio
-        alignItems: 'center', // Centra el texto en el botón
+        borderColor: '#0056b3',
+        marginHorizontal: 10, 
+        flex: 1, 
+        alignItems: 'center', 
     },
     modalButtonregresar: {
-        // backgroundColor: '#007BFF', // Color de fondo del botón
         backgroundColor: '#e52510',
         padding: 10,
         borderRadius: 5,
         borderWidth: 1,
-        borderColor: '#e52510', // Color del borde
-        marginHorizontal: 10, // Espaciado entre los botones
-        flex: 1, // Hace que los botones ocupen el mismo espacio
-        alignItems: 'center', // Centra el texto en el botón
+        borderColor: '#e52510',
+        marginHorizontal: 10, 
+        flex: 1,
+        alignItems: 'center',
     },
 });
