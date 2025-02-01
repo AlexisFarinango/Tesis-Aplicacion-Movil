@@ -14,26 +14,26 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { KeyboardAvoidingView, Platform } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
-// Función para formatear fecha
+
 const formatearfecha = (fechaISO) => {
     console.log("fecha nacimiento", fechaISO);
 
-    // Crear la fecha a partir de la cadena ISO
+    
     const fecha = new Date(fechaISO);
 
-    // Ajustar la fecha para evitar el desfase
+    
     const fechaLocal = new Date(fecha.getTime() + fecha.getTimezoneOffset() * 60000);
 
     console.log("fecha nacimiento ajustada", fechaLocal);
 
-    // Formatear la fecha
+   
     const fechaFormateada = fechaLocal.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
     console.log("fecha nacimiento formateada", fechaFormateada);
 
     return fechaFormateada;
 };
 
-// Esquema de validación con Yup
+
 const validationSchema = Yup.object().shape({
     nombre: Yup.string().trim().matches(/^[A-Za-zñÑáéíóúÁÉÍÓÚ\s]+$/, 'El nombre solo puede contener letras').required('Nombre Obligatorio').max(40, 'El nombre no puede tener más de 40 caracteres').min(3, "Debe existir un minimo de 3 caracteres"),
     apellido: Yup.string().trim().matches(/^[A-Za-zñÑáéíóúÁÉÍÓÚ\s]+$/, 'El apellido solo puede contener letras').required('Apellido Obligatorio').max(40, 'El apellido no puede tener más de 40 caracteres').min(3, "Debe existir un minimo de 3 caracteres"),
@@ -55,7 +55,7 @@ export default function PerfilEstudiante() {
             const token = await AsyncStorage.getItem('userToken');
             console.log("valores", values);
 
-            // Crear un FormData para enviar la fotografía correctamente
+           
             const formData = new FormData();
             formData.append('nombre', values.nombre);
             formData.append('apellido', values.apellido);
@@ -63,14 +63,6 @@ export default function PerfilEstudiante() {
             formData.append('ciudad', values.ciudad);
             formData.append('telefono', values.telefono);
 
-            // Verificar si hay una nueva fotografía y agregarla al FormData
-            // if (values.fotografia) {
-            //     formData.append('fotografia', {
-            //         uri: values.fotografia,
-            //         type: 'image/jpeg', // Cambia esto si es necesario
-            //         name: values.fotografia.split('/').pop() || `photo_${Date.now()}.jpg`,
-            //     });
-            // }
 
             console.log("Este es el formulario:", JSON.stringify(formData, null, 2));
 
@@ -102,33 +94,6 @@ export default function PerfilEstudiante() {
         }
     };
 
-    // const requestCameraPermission = async (setFieldValue) => {
-    //     try {
-    //         const granted = await PermissionsAndroid.request(
-    //             PermissionsAndroid.PERMISSIONS.CAMERA,
-    //             {
-    //                 title: 'Permiso de Cámara',
-    //                 message: 'La aplicación necesita acceso a la cámara.',
-    //                 buttonNeutral: 'Preguntar luego',
-    //                 buttonNegative: 'Cancelar',
-    //                 buttonPositive: 'Aceptar',
-    //             },
-    //         );
-
-    //         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-    //             launchCamera({ mediaType: 'photo' }, (response) => {
-    //                 if (response.assets) {
-    //                     setFieldValue('fotografia', response.assets[0].uri);
-    //                     console.log("foto tomada:", response.assets[0].uri);
-    //                 }
-    //             });
-    //         } else {
-    //             console.log('Permiso de cámara denegado');
-    //         }
-    //     } catch (err) {
-    //         console.warn(err);
-    //     }
-    // };
 
     const styles = StyleSheet.create({
         container: {
@@ -252,7 +217,6 @@ export default function PerfilEstudiante() {
                             direccion: userData.direccion || '',
                             ciudad: userData.ciudad || '',
                             telefono: userData.telefono || '',
-                            // fotografia: userData.fotografia || '',
                         }}
                         validationSchema={validationSchema}
                         onSubmit={handleUpdate}

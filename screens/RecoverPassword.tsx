@@ -63,18 +63,18 @@ export default function RecuperarContra() {
             fontWeight: "bold",
             marginBottom: 20,
             textAlign: "center",
-            color: "#003366",  // Azul oscuro
+            color: "#003366", 
         },
         label: {
             fontSize: 18,
             fontWeight: "600",
             marginBottom: 10,
-            color: "#003366",  // Azul oscuro
+            color: "#003366", 
             textAlign: "center",
         },
         input: {
             height: 50,
-            borderColor: "#003366",  // Azul oscuro
+            borderColor: "#003366", 
             borderWidth: 1,
             borderRadius: 10,
             paddingHorizontal: 15,
@@ -83,7 +83,7 @@ export default function RecuperarContra() {
             color: "#666666",
         },
         button: {
-            backgroundColor: "#007BFF",  // Rojo
+            backgroundColor: "#007BFF", 
             padding: 15,
             borderRadius: 10,
             alignItems: "center",
@@ -97,7 +97,6 @@ export default function RecuperarContra() {
     return (
         <View style={styles.container}>
             <Toast />
-            {/* <Text style={styles.title}>Recuperación de Contraseña</Text> */}
             <Text style={styles.label}>Ingresa tu correo Electrónico</Text>
             <TextInput style={styles.input} placeholder="Correo institucional para recuperación" value={email} onChangeText={setEmail} keyboardType="email-address" />
             <TouchableOpacity style={styles.button} onPress={handleRecuperar}>

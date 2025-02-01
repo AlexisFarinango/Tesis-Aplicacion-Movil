@@ -74,7 +74,7 @@ export default function DetallesActuaciones() {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Detalle Actuaciones{"\n"} Semestre {semestre}</Text>
-            {fechas.length === 0 ? ( // Condición para verificar si no hay datos
+            {fechas.length === 0 ? ( 
                 <Text style={styles.noDataText}>No existen registros de actuaciones en este curso</Text>
             ) : (
 

@@ -17,13 +17,13 @@ export default function TokenValidadoRegistro() {
     useFocusEffect(
         useCallback(() => {
             const handleBackPress = () => {
-                RNMinimizeApp.minimizeApp(); // Envía la aplicación al fondo
-                return true; // Previene el comportamiento predeterminado
+                RNMinimizeApp.minimizeApp();
+                return true;
             };
 
             BackHandler.addEventListener('hardwareBackPress', handleBackPress);
 
-            // Limpia el listener cuando se pierde el enfoque
+
             return () => {
                 BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
             };
@@ -35,7 +35,6 @@ export default function TokenValidadoRegistro() {
         newCode[index] = text;
         setCode(newCode);
 
-        // Avanzar automáticamente al siguiente campo si hay texto y no es el último campo
         if (text && index < 5) {
             inputs.current[index + 1].focus();
         }
