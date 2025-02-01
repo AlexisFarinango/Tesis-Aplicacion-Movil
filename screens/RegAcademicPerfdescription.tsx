@@ -4,23 +4,22 @@ import axios from 'axios';
 import React, { useState, useEffect, Component } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image, Modal, TextInput } from 'react-native';
 import { API_URL_BACKEND } from '@env';
-// import { Permissions } from "expo";
 import { PermissionsAndroid } from 'react-native';
 
 import Voice from '@react-native-voice/voice';
 import Toast from 'react-native-toast-message';
 
-// Función para obtener la fecha actual en formato deseado
+
 const obtenerFechaActual = () => {
     const ahora = new Date();
     const opciones = { year: 'numeric', month: 'long', day: 'numeric' };
-    return ahora.toLocaleDateString('es-ES', opciones); // Cambia 'es-ES' según el idioma deseado
+    return ahora.toLocaleDateString('es-ES', opciones); 
 };
 
 export default function DetalleActuaciones() {
     const navigation = useNavigation();
     const route = useRoute();
-    const { materia, paralelo, semestre } = route.params; // Obtenemos el ID de la materia desde la navegación
+    const { materia, paralelo, semestre } = route.params; 
 
     const [actuaciones, setActuaciones] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
@@ -34,7 +33,7 @@ export default function DetalleActuaciones() {
 
     const handleMicrophonePress = async () => {
         try {
-            // Solicitar permisos de micrófono en Android
+
             const granted = await PermissionsAndroid.request(
                 PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
                 {
@@ -48,7 +47,7 @@ export default function DetalleActuaciones() {
 
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
                 console.log("Permiso de micrófono concedido");
-                // Iniciar o detener la grabación según el estado de `escuchando`
+  
                 escuchando ? stopListening() : startListening();
             } else {
                 console.log("Permiso de micrófono no concedido");
@@ -64,7 +63,7 @@ export default function DetalleActuaciones() {
         const obtenerFechaActual = () => {
             const ahora = new Date();
             const anio = ahora.getFullYear();
-            const mes = String(ahora.getMonth() + 1).padStart(2, '0'); // Meses van de 0 a 11
+            const mes = String(ahora.getMonth() + 1).padStart(2, '0'); 
             const dia = String(ahora.getDate()).padStart(2, '0');
             return `${dia}/${mes}/${anio}`;
         };
@@ -82,7 +81,7 @@ export default function DetalleActuaciones() {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            // Agregar la propiedad 'cantiactuacionesactuales' inicializada en 0
+ 
             const dataConCantActuaciones = response.data.map((item) => ({
                 ...item,
                 cantiactuacionesactuales: 0,
@@ -91,7 +90,7 @@ export default function DetalleActuaciones() {
             console.log("Datos Asistentes completo: ", dataConCantActuaciones.map((item) => item.fecha));
             console.log("Datos Asistentes completo: ", dataConCantActuaciones.fecha);
 
-            // Filtrar los datos que coinciden con la fecha actual
+ 
             const datosConFechaActual = dataConCantActuaciones.filter(data =>
                 data.fecha.includes(fechaActual)
             );
@@ -99,7 +98,7 @@ export default function DetalleActuaciones() {
 
 
             if (datosConFechaActual.length > 0) {
-                // Si hay coincidencias, actualizamos 'actuaciones'
+              
                 setActuaciones(datosConFechaActual);
             } else {
                 console.log("No se encontraron datos con la fecha actual, no se actualizarán actuaciones.");
@@ -170,7 +169,7 @@ export default function DetalleActuaciones() {
         }
     }
 
-    // Función para aumentar actuación de un estudiante
+   
     const aumentarActuacion = (id) => {
         setActuaciones((prevActuaciones) =>
             prevActuaciones.map((item) =>
@@ -181,7 +180,7 @@ export default function DetalleActuaciones() {
         );
     };
 
-    // Función para disminuir actuación de un estudiante
+    
     const disminuirActuacion = (id) => {
         setActuaciones(prevActuaciones =>
             prevActuaciones.map(item =>
@@ -190,7 +189,7 @@ export default function DetalleActuaciones() {
         );
     };
 
-    // Función para añadir actuación a todos los estudiantes
+  
     const añadirActuacionATodos = () => {
         setActuaciones(prevActuaciones =>
             prevActuaciones.map(item =>
@@ -203,7 +202,7 @@ export default function DetalleActuaciones() {
 
     const abrirModal = (estudiante) => {
         if (estudiante.descripciones.length >= 3) {
-            // alert("Este estudiante ya tiene 3 descripciones.");
+       
             Toast.show({
                 type: "error",
                 text1: "Este estudiante ya tiene 3 descripciones."
@@ -256,7 +255,7 @@ export default function DetalleActuaciones() {
         const obtenerFechaActual = () => {
             const ahora = new Date();
             const anio = ahora.getFullYear();
-            const mes = String(ahora.getMonth() + 1).padStart(2, '0'); // Meses van de 0 a 11
+            const mes = String(ahora.getMonth() + 1).padStart(2, '0'); 
             const dia = String(ahora.getDate()).padStart(2, '0');
             return `${dia}/${mes}/${anio}`;
         };
@@ -291,7 +290,7 @@ export default function DetalleActuaciones() {
                 visibilityTime: 3000,
             })
             setTimeout(() => {
-                // Toast.hide(); // Esto cerrará el Toast después de 3 segundos
+            
                 navigation.goBack();
             }, 3000);
         } catch (error) {
@@ -301,7 +300,7 @@ export default function DetalleActuaciones() {
                 text1: "Error al realizar el registro de Actuaciones"
             })
             setTimeout(() => {
-                Toast.hide(); // Esto cerrará el Toast después de 3 segundos
+                Toast.hide(); 
             }, 3000);
         }
     };
@@ -323,11 +322,10 @@ export default function DetalleActuaciones() {
             setIdsestudiantesUpdate(response.data.map(item => item.estudiante));
             console.log("Ids de todas las actuaciones de todos los estudiantes del curso: ", idsActuaciones);
             console.log("Ids de todaos los estudiantes del curso: ", idsEstudiantesupdate);
-            // console.log(actuaciones);
-            // console.log(actuaciones.estudiante._id);
+
             console.log(actuaciones.map(item => item.estudiante._id));
 
-            //Comparando los IDs de actuaciones con los estudiantes a actualizar
+            
             const actuacionesconsul = actuaciones.filter(item => idsEstudiantesupdate.includes(item.estudiante._id.toString())).map(item => ({
                 id: idsActuaciones[idsEstudiantesupdate.indexOf(item.estudiante._id.toString())],
                 cantidad_actuaciones: item.cantiactuacionesactuales || "0",
@@ -350,7 +348,7 @@ export default function DetalleActuaciones() {
             <Text style={styles.tableCell}>{item.estudiante.nombre} {item.estudiante.apellido}</Text>
             <Text style={styles.tableCell}>{item.cantiactuacionesactuales}</Text>
             <View style={styles.actionsCell}>
-                {/* Botón para disminuir actuación */}
+            
                 <TouchableOpacity onPress={() => disminuirActuacion(item.estudiante._id)}>
                     <Image
                         source={require('../icons/disminuir.png')}
@@ -358,7 +356,7 @@ export default function DetalleActuaciones() {
                     />
                 </TouchableOpacity>
 
-                {/* Botón para aumentar actuación */}
+           
                 <TouchableOpacity onPress={() => aumentarActuacion(item.estudiante._id)}>
                     <Image
                         source={require('../icons/aumentar.png')}
@@ -366,7 +364,7 @@ export default function DetalleActuaciones() {
                     />
                 </TouchableOpacity>
 
-                {/* Botón del micrófono o acción */}
+  
                 <TouchableOpacity onPress={() => abrirModal(item)}>
                     <Image
                         source={require('../icons/microfono.png')}
@@ -407,7 +405,7 @@ export default function DetalleActuaciones() {
                     />
                 </View>
 
-                {/* Botones de acción */}
+       
                 <TouchableOpacity style={styles.buttonAction} onPress={añadirActuacionATodos}>
                     <Text style={styles.buttonText}>Añadir Actuación a todos los estudiantes</Text>
                 </TouchableOpacity>
@@ -557,7 +555,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     icondos: {
-        width: 30,   // Tamaño de los iconos
+        width: 30, 
         height: 30,
     },
     buttonAction: {
@@ -650,12 +648,12 @@ const styles = StyleSheet.create({
         borderRadius: 30,
     },
     addButton: {
-        flex: 1, // Ambos botones ocuparán el mismo espacio
-        marginHorizontal: 5, // Espacio entre los botones
-        backgroundColor: '#007BFF', // Color de fondo (ajusta según sea necesario)
-        paddingVertical: 15, // Espaciado vertical
-        borderRadius: 10, // Bordes redondeados
-        alignItems: 'center', // Centra el texto
+        flex: 1, 
+        marginHorizontal: 5, 
+        backgroundColor: '#007BFF', 
+        paddingVertical: 15, 
+        borderRadius: 10, 
+        alignItems: 'center',
     },
     addButtonText: {
         color: '#fff',
@@ -663,10 +661,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     retocederfondo: {
-        flex: 1, // Ambos botones ocuparán el mismo espacio
-        marginHorizontal: 5, // Espacio entre los botones
+        flex: 1, 
+        marginHorizontal: 5, 
         backgroundColor: '#e52510',
-        paddingVertical: 15, // Espaciado vertic
+        paddingVertical: 15, 
         borderRadius: 10,
         alignItems: 'center',
     },
@@ -692,9 +690,9 @@ const styles = StyleSheet.create({
         height: 25,
     },
     infoText: {
-        fontSize: 16, // Ajusta el tamaño de la fuente según sea necesario
-        marginRight: 5, // Espacio entre el texto y el icono
-        color: '#333', // Color del texto
+        fontSize: 16, 
+        marginRight: 5, 
+        color: '#333', 
     },
     modalContainerdos: {
         flex: 1,
@@ -730,14 +728,14 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     buttonContainer: {
-        flexDirection: 'row', // Alinea los botones en fila
-        justifyContent: 'space-between', // Espacio entre los botones
-        marginTop: 20, // Espacio superior opcional
+        flexDirection: 'row', 
+        justifyContent: 'space-between', 
+        marginTop: 20, 
     },
     textodos: {
         color: "#666666",
     },
     recordingButton: {
-        backgroundColor: '#FDD835', // Color cuando está grabando
+        backgroundColor: '#FDD835', 
     },
 });

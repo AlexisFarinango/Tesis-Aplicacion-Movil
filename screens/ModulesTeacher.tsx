@@ -17,13 +17,12 @@ export default function ModulosDocentes() {
     useFocusEffect(
         useCallback(() => {
             const handleBackPress = () => {
-                RNMinimizeApp.minimizeApp(); // Envía la aplicación al fondo
-                return true; // Previene el comportamiento predeterminado
+                RNMinimizeApp.minimizeApp(); 
+                return true;
             };
 
             BackHandler.addEventListener('hardwareBackPress', handleBackPress);
 
-            // Limpia el listener cuando se pierde el enfoque
             return () => {
                 BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
             };
@@ -37,8 +36,8 @@ export default function ModulosDocentes() {
         </TouchableOpacity>
     );
     const handleLogout = async () => {
-        await logout();  // Llamar la función logout del contexto
-        navigation.navigate("Iniciar Sesión");  // Navegar a la pantalla de inicio de sesión
+        await logout(); 
+        navigation.navigate("Iniciar Sesión");  
     };
 
     return (
@@ -99,8 +98,8 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.2,
         shadowRadius: 1.41,
         elevation: 2,
-        width: '95%', // Ajustado para una columna
-        alignSelf: 'center', // Centra la tarjeta
+        width: '95%', 
+        alignSelf: 'center', 
 
     },
     highlight: {

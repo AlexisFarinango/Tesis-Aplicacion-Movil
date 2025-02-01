@@ -111,18 +111,18 @@ export default function Login() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const { width } = Dimensions.get('window');
   const isTablet = width >= 768;
-  const scaleFactor = width < 400 ? 0.8 : (isTablet ? 0.6 : 1.1); // Ajustar el factor de escala
+  const scaleFactor = width < 400 ? 0.8 : (isTablet ? 0.6 : 1.1); 
 
   useFocusEffect(
     useCallback(() => {
       const handleBackPress = () => {
-        RNMinimizeApp.minimizeApp(); // Envía la aplicación al fondo
-        return true; // Previene el comportamiento predeterminado
+        RNMinimizeApp.minimizeApp();
+        return true; 
       };
 
       BackHandler.addEventListener('hardwareBackPress', handleBackPress);
 
-      // Limpia el listener cuando se pierde el enfoque
+
       return () => {
         BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
       };
@@ -154,12 +154,9 @@ export default function Login() {
 
         await AsyncStorage.setItem('userToken', token);
         login(token);
-        // const decodedToken = jwtDecode(token);
 
-        // Redirige al usuario según su rol
         const user = jwtDecode(token);
         console.log(user);
-        // setUser(decoded);
 
         if (user.rol === 'docente') {
           navigation.navigate("Docente");
@@ -192,13 +189,9 @@ export default function Login() {
             text2: `Revisa tu conexión a Internet`,
           })
         }
-        // Si también falla el login de docente, mostramos un mensaje de error
-        // alert("Usuario o contraseña incorrectos.");
-        // console.log("Error de autenticación:", errorDocente);
       }
     } else {
       try {
-        // Primero intentamos en el endpoint de estudiantes
         let response = await axios.post(`${API_URL_BACKEND}/estudiante/login`, {
           email: email,
           password: password,
@@ -207,11 +200,9 @@ export default function Login() {
         const { token } = response.data;
         await AsyncStorage.setItem('userToken', token);
         login(token);
-        // Redirige al usuario según su rol
         const user = jwtDecode(token);
         console.log(user);
 
-        // setUser(decoded);
         if (user.rol === 'estudiante') {
           navigation.navigate("Estudiante");
           setEmail("");

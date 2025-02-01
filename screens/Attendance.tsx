@@ -38,10 +38,10 @@ export default function Asistencias() {
             borderTopRightRadius: 5,
         },
         headerText: {
-            color: "#fff", // Letras blancas
+            color: "#fff", 
             fontWeight: "bold",
             fontSize: 14,
-            width: 70,  // Ancho de cada columna (ajustable según necesidad)
+            width: 70, 
             textAlign: "center",
         },
         headertableText: {
@@ -64,15 +64,15 @@ export default function Asistencias() {
             color: "#666666",
         },
         button: {
-            backgroundColor: "#cc0605", // Rojo
+            backgroundColor: "#cc0605", 
             paddingVertical: 15,
             borderRadius: 10,
             alignItems: "center",
             alignSelf: "center",
-            width: "50%", // Tamaño del botón
+            width: "50%", 
         },
         buttonText: {
-            color: "#fff", // Letras blancas
+            color: "#fff", 
             fontSize: 16,
             fontWeight: "bold",
         },
@@ -165,7 +165,6 @@ export default function Asistencias() {
             marginVertical: 20,
         },
         table: {
-            // Estilos de la tabla
         },
         descriptiondos: {
             fontSize: 16,
@@ -214,7 +213,6 @@ export default function Asistencias() {
     };
 
 
-    //Llamar las asistencias despues de llamar los cursos
     const updateAsistencias = async () => {
         const token = await AsyncStorage.getItem("userToken")
         try {
@@ -238,7 +236,6 @@ export default function Asistencias() {
 
 
 
-    // Llamar a updateCursos cuando el componente se monta
     useEffect(() => {
         updateCursos();
     }, []);
@@ -249,31 +246,6 @@ export default function Asistencias() {
     }, [selectedMateria, selectedParalelo, selectedSemestre]);
 
 
-
-    // const asistencias = {
-    //     'Química': [
-    //         { fecha: '02-10-2024', estado: 'Presente' },
-    //         { fecha: '03-10-2024', estado: 'Presente' },
-    //         { fecha: '04-10-2024', estado: 'Presente' },
-    //         { fecha: '05-10-2024', estado: 'Ausente' },
-    //         { fecha: '02-10-2024', estado: 'Presente' },
-    //         { fecha: '03-10-2024', estado: 'Presente' },
-    //         { fecha: '04-10-2024', estado: 'Presente' },
-    //         { fecha: '05-10-2024', estado: 'Ausente' },
-    //     ],
-    //     'Matemáticas': [
-    //         { fecha: '02-10-2024', estado: 'Presente' },
-    //         { fecha: '03-10-2024', estado: 'Presente' },
-    //         { fecha: '04-10-2024', estado: 'Presente' },
-    //         { fecha: '05-10-2024', estado: 'Ausente' },
-    //     ],
-    //     'Física': [
-    //         { fecha: '02-10-2024', estado: 'Presente' },
-    //         { fecha: '03-10-2024', estado: 'Presente' },
-    //         { fecha: '04-10-2024', estado: 'Presente' },
-    //         { fecha: '05-10-2024', estado: 'Ausente' },
-    //     ],
-    // };
     const navigation = useNavigation();
     const renderItem = ({ item }) => (
         <TouchableOpacity style={[styles.card, item.highlight && styles.highlight]} onPress={() => { setSelectedMateria(item.materia); setSelectedParalelo(item.paralelo); setSelectedSemestre(item.semestre); setModalVisible(true) }}>

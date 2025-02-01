@@ -15,32 +15,32 @@ export default function TokenValidado() {
     const navigation = useNavigation();
     const inputs = useRef([]);
     const handleNewPasswordChange = (text) => {
-        // Verifica si el texto contiene espacios
+     
         if (text.includes(' ')) {
-            // Si contiene espacios, no actualiza el estado
+           
             return;
         }
-        setNewPassword(text); // Actualiza el estado si no hay espacios
+        setNewPassword(text); 
     };
 
     const handleConfirmPasswordChange = (text) => {
-        // Verifica si el texto contiene espacios
+        
         if (text.includes(' ')) {
-            // Si contiene espacios, no actualiza el estado
+   
             return;
         }
-        setConfirmPassword(text); // Actualiza el estado si no hay espacios
+        setConfirmPassword(text);
     };
     useFocusEffect(
         useCallback(() => {
             const handleBackPress = () => {
-                RNMinimizeApp.minimizeApp(); // Envía la aplicación al fondo
-                return true; // Previene el comportamiento predeterminado
+                RNMinimizeApp.minimizeApp(); 
+                return true; 
             };
 
             BackHandler.addEventListener('hardwareBackPress', handleBackPress);
 
-            // Limpia el listener cuando se pierde el enfoque
+     
             return () => {
                 BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
             };
@@ -52,7 +52,6 @@ export default function TokenValidado() {
         newCode[index] = text;
         setCode(newCode);
 
-        // Avanzar automáticamente al siguiente campo si hay texto y no es el último campo
         if (text && index < 5) {
             inputs.current[index + 1].focus();
         }
@@ -73,7 +72,7 @@ export default function TokenValidado() {
                     type: "success",
                     text1: `${response.data.msg}`
                 })
-                // Si la respuesta es exitosa, muestra el modal
+               
                 setShowModal(true);
             } catch (error) {
                 console.log("Se obtuvo un error al validar el token", error);
@@ -88,7 +87,6 @@ export default function TokenValidado() {
 
     const handleSavePassword = async () => {
         const tokenvalidatepass = code.join('');
-        // Validar que los campos no estén vacíos
         if (!newPassword || !confirmPassword) {
             Toast.show({
                 type: "error",
@@ -96,7 +94,6 @@ export default function TokenValidado() {
             });
             return;
         } else {
-            //Validar que las contraseñas coincidan
             if (newPassword !== confirmPassword) {
                 Toast.show({
                     type: "error",
@@ -114,14 +111,12 @@ export default function TokenValidado() {
                     try {
                         const prefixedNewPassword = `EST${newPassword}`;
                         const prefixedConfirmPassword = `EST${confirmPassword}`;
-                        // Aquí puedes agregar la lógica para guardar la nueva contraseña en el backend
                         const response = await axios.post(`${API_URL_BACKEND}/estudiante/nueva-password/${tokenvalidatepass}`, {
                             password: prefixedNewPassword,
                             confirmarPassword: prefixedConfirmPassword,
                         });
                         console.log("Contraseña cambiada exitosamente");
     
-                        // Cierra el modal después de guardar la contraseña
                         setShowModal(false);
                         Toast.show({
                             type: 'success',
@@ -160,7 +155,7 @@ export default function TokenValidado() {
                 <Text style={styles.buttonText}>Enviar</Text>
             </TouchableOpacity>
 
-            {/* Modal para ingresar nueva contraseña */}
+
             <Modal
                 visible={showModal}
                 animationType="slide"
@@ -279,21 +274,21 @@ const styles = StyleSheet.create({
     },
     passwordContainer: {
         marginVertical: 10,
-        flexDirection: 'row', // Organiza los elementos en una fila
-        alignItems: 'center', // Alinea verticalmente en el centro
-        borderWidth: 1, // Opcional: para mostrar un borde en el contenedor
-        borderColor: '#ccc', // Opcional: color del borde
-        borderRadius: 5, // Opcional: esquinas redondeadas
-        padding: 5, // Opcional: espacio interno
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        borderWidth: 1, 
+        borderColor: '#ccc', 
+        borderRadius: 5, 
+        padding: 5, 
     },
     prefix: {
-        marginRight: 5, // Espacio entre "EST" y el input
-        fontWeight: 'bold', // Opcional: formato del texto "EST"
+        marginRight: 5, 
+        fontWeight: 'bold',
         color: "#666666",
     },
     modalInput: {
-        flex: 1, // Hace que el input ocupe el resto del espacio disponible
-        height: 40, // Altura del TextInput
+        flex: 1, 
+        height: 40, 
         backgroundColor: "#fff",
         color: "#666666",
     },

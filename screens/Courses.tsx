@@ -9,9 +9,9 @@ import Toast from "react-native-toast-message";
 export default function Materias() {
     const navigation = useNavigation();
     const [cursoCodigo, setCursoCodigo] = useState('');
-    const [cursos, setCursos] = useState([]); // Inicializamos como un array vacío
+    const [cursos, setCursos] = useState([]); 
 
-    // Función para obtener y actualizar los cursos del estudiante
+ 
     const updateCursos = async () => {
         const token = await AsyncStorage.getItem('userToken');
         try {
@@ -21,7 +21,7 @@ export default function Materias() {
                 }
             });
             if (response.status === 200) {
-                setCursos(response.data.informacionCursos); // Actualizamos el estado de cursos
+                setCursos(response.data.informacionCursos);
                 console.log("cursitos", response.data.informacionCursos);
 
                 Toast.show({
@@ -45,12 +45,12 @@ export default function Materias() {
         }
     };
 
-    // Llamar a updateCursos cuando el componente se monta
+
     useEffect(() => {
         updateCursos();
     }, []);
 
-    // Función para registrar un curso nuevo
+
     const agregarCurso = async () => {
         const token = await AsyncStorage.getItem('userToken');
         try {
@@ -67,7 +67,7 @@ export default function Materias() {
                     type: "success",
                     text1: "Curso Asignado con éxito",
                 });
-                updateCursos(); // Actualizamos la lista de cursos después de registrar uno nuevo
+                updateCursos(); 
             }
 
         } catch (error) {
@@ -220,16 +220,16 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
     },
     cursoinput: {
-        flexDirection: 'row', // Organiza elementos en fila
+        flexDirection: 'row', 
         alignItems: 'center',
         marginVertical: 10,
-        gap: 10, // Espacio entre columnas
+        gap: 10,
     },
     inputColumn: {
-        flex: 2, // Toma 2/3 del espacio disponible
+        flex: 2, 
     },
     buttonColumn: {
-        flex: 1, // Toma 1/3 del espacio disponible
+        flex: 1, 
     },
     prefix: {
         backgroundColor: '#FFF',
@@ -247,11 +247,10 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         alignItems: 'center',
         justifyContent: 'center',
-        // height: '20%', // Misma altura que el input
     },
     addButtonText: {
         color: '#FFF',
-        fontSize: 14, // Texto más pequeño
+        fontSize: 14, 
         fontWeight: 'bold',
     },
     description: {

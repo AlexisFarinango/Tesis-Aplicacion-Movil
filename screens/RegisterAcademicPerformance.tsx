@@ -29,21 +29,21 @@ export default function RegistrarAsistencias() {
             flexDirection: "row",
             justifyContent: "flex-start",
             padding: 10,
-            backgroundColor: "#003366", // Azul oscuro
+            backgroundColor: "#003366", 
             borderRadius: 5,
         },
         headerText: {
-            color: "#fff", // Letras blancas
+            color: "#fff", 
             fontWeight: "bold",
             fontSize: 14,
-            width: 70,  // Ancho de cada columna (ajustable según necesidad)
+            width: 70, 
             textAlign: "center",
         },
         headertableText: {
-            color: "#fff", // Letras blancas
+            color: "#fff", 
             fontWeight: "bold",
             fontSize: 14,
-            width: 125,  // Ancho de cada columna (ajustable según necesidad)
+            width: 125,  
             textAlign: "center",
         },
         tableRow: {
@@ -56,19 +56,19 @@ export default function RegistrarAsistencias() {
         },
         rowText: {
             fontSize: 14,
-            width: 125,  // Ancho de cada columna (ajustable según necesidad)
+            width: 125,  
             textAlign: "center",
         },
         button: {
-            backgroundColor: "#cc0605", // Rojo
+            backgroundColor: "#cc0605", 
             paddingVertical: 15,
             borderRadius: 10,
             alignItems: "center",
             alignSelf: "center",
-            width: "50%", // Tamaño del botón
+            width: "50%", 
         },
         buttonText: {
-            color: "#fff", // Letras blancas
+            color: "#fff", 
             fontSize: 16,
             fontWeight: "bold",
         },
@@ -107,8 +107,8 @@ export default function RegistrarAsistencias() {
             shadowOpacity: 0.2,
             shadowRadius: 1.41,
             elevation: 2,
-            width: '95%', // Ajustado para una columna
-            alignSelf: 'center', // Centra la tarjeta
+            width: '95%', 
+            alignSelf: 'center', 
 
         },
         highlight: {
@@ -134,8 +134,8 @@ export default function RegistrarAsistencias() {
     const navigation = useNavigation();
     const { logout } = useContext(AuthContext);
     const handleLogout = async () => {
-        await logout();  // Llamar la función logout del contexto
-        navigation.navigate("Iniciar Sesión");  // Navegar a la pantalla de inicio de sesión
+        await logout();  
+        navigation.navigate("Iniciar Sesión"); 
     };
     const updateCursos = async () => {
         const token = await AsyncStorage.getItem('userToken');
@@ -153,7 +153,7 @@ export default function RegistrarAsistencias() {
                 }
             });
             if (response.status === 200) {
-                setCursos(response.data); // Actualizamos el estado de cursos
+                setCursos(response.data);
                 console.log("cursitos", response.data);
 
                 Toast.show({
@@ -193,7 +193,7 @@ export default function RegistrarAsistencias() {
         const obtenerFechaActual = () => {
             const ahora = new Date();
             const anio = ahora.getFullYear();
-            const mes = String(ahora.getMonth() + 1).padStart(2, '0'); // Meses van de 0 a 11
+            const mes = String(ahora.getMonth() + 1).padStart(2, '0'); 
             const dia = String(ahora.getDate()).padStart(2, '0');
             return `${dia}/${mes}/${anio}`;
         };
@@ -202,7 +202,7 @@ export default function RegistrarAsistencias() {
         console.log("Fecha actual:", fechaActual);
 
         try {
-            // Realiza la consulta para obtener las actuaciones
+  
             const response = await axios.post(`${API_URL_BACKEND}/actuacion/visualizar`, {
                 materia: item.materia,
                 paralelo: item.paralelo,
@@ -213,22 +213,21 @@ export default function RegistrarAsistencias() {
                 }
             });
 
-            const actuaciones = response.data; // Obtén los datos de la respuesta
+            const actuaciones = response.data; 
             console.log("Actuaciones obtenidas:", actuaciones);
 
-            // Busca si la fecha actual existe en alguna de las `fecha_actuaciones`
             const fechaEncontrada = actuaciones.some(actuacion =>
                 actuacion.fecha_actuaciones.includes(fechaActual)
             );
 
             if (fechaEncontrada) {
-                // Muestra una notificación si la fecha actual ya está registrada
+               
                 Toast.show({
                     type: "error",
                     text1: "Las actuaciones con la fecha actual ya fueron registradas"
                 });
             } else {
-                // Navega al módulo si la fecha actual no está registrada
+                
                 navigation.navigate("Detalle Registro Actuacion", {
                     materia: item.materia,
                     paralelo: item.paralelo,
@@ -250,13 +249,12 @@ export default function RegistrarAsistencias() {
     };
     useEffect(() => {
         updateCursos();
-        // verificarFechaRegistro();
     }, []);
     
     const obtenerFechaActual = () => {
         const ahora = new Date();
         const anio = ahora.getFullYear();
-        const mes = String(ahora.getMonth() + 1).padStart(2, '0'); // Meses van de 0 a 11
+        const mes = String(ahora.getMonth() + 1).padStart(2, '0'); 
         const dia = String(ahora.getDate()).padStart(2, '0');
         return `${dia}/${mes}/${anio}`;
     };

@@ -27,21 +27,21 @@ export default function Asistencias() {
             flexDirection: "row",
             justifyContent: "flex-start",
             padding: 10,
-            backgroundColor: "#003366", // Azul oscuro
+            backgroundColor: "#003366",
             borderRadius: 5,
         },
         headerText: {
-            color: "#fff", // Letras blancas
+            color: "#fff", 
             fontWeight: "bold",
             fontSize: 14,
-            width: 70,  // Ancho de cada columna (ajustable según necesidad)
+            width: 70, 
             textAlign: "center",
         },
         headertableText: {
-            color: "#fff", // Letras blancas
+            color: "#fff",
             fontWeight: "bold",
             fontSize: 14,
-            width: 125,  // Ancho de cada columna (ajustable según necesidad)
+            width: 125, 
             textAlign: "center",
         },
         tableRow: {
@@ -54,19 +54,19 @@ export default function Asistencias() {
         },
         rowText: {
             fontSize: 14,
-            width: 125,  // Ancho de cada columna (ajustable según necesidad)
+            width: 125, 
             textAlign: "center",
         },
         button: {
-            backgroundColor: "#cc0605", // Rojo
+            backgroundColor: "#cc0605",
             paddingVertical: 15,
             borderRadius: 10,
             alignItems: "center",
             alignSelf: "center",
-            width: "50%", // Tamaño del botón
+            width: "50%",
         },
         buttonText: {
-            color: "#fff", // Letras blancas
+            color: "#fff", 
             fontSize: 16,
             fontWeight: "bold",
         },
@@ -105,8 +105,8 @@ export default function Asistencias() {
             shadowOpacity: 0.2,
             shadowRadius: 1.41,
             elevation: 2,
-            width: '95%', // Ajustado para una columna
-            alignSelf: 'center', // Centra la tarjeta
+            width: '95%',
+            alignSelf: 'center', 
 
         },
         highlight: {
@@ -136,11 +136,6 @@ export default function Asistencias() {
     const [selectedParalelo, setSelectedParalelo] = useState(null);
     const [selectedSemestre, setSelectedSemestre] = useState(null);
 
-    // const data = [
-    //     { id: 1, title: 'Química', screen:'Detalles Actuaciones'},
-    //     { id: 2, title: 'Matemáticas',screen:'Detalles Actuaciones'},
-    //     { id: 3, title: 'Física', screen:'Detalles Actuaciones'},
-    // ];
 
     const updateCursos = async () => {
         const token = await AsyncStorage.getItem("userToken");
@@ -169,7 +164,7 @@ export default function Asistencias() {
         }
     }
 
-    // Llamar a updateCursos cuando el componente se monta
+ 
     useEffect(() => {
         updateCursos();
     }, []);
