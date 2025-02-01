@@ -77,3 +77,4 @@ yarn-error.log
 # Ignorar el archivo Keystore
 my-release-key.jks
 
+.env
